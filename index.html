@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP Professional ML Engineer Cert - Training Hub</title>
+    <!-- Modern Styling -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-section">
+                <div class="brand-icon">G</div>
+                <div class="brand-details">
+                    <span class="brand-title">GCP ML Cert</span>
+                    <span class="brand-subtitle">Training Hub</span>
+                </div>
+            </div>
+            
+            <!-- Overall Progress Widget -->
+            <div class="progress-section">
+                <div class="progress-label-container">
+                    <span>Course Progress</span>
+                    <span id="global-progress-text">0%</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div id="global-progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="navigation-links">
+                <li class="nav-category">Overview</li>
+                <li>
+                    <a href="#" class="nav-link active" data-target="dashboard">
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    </a>
+                </li>
+                
+                <li class="nav-category">Modules (Skills Portal)</li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m1-fundamentals">
+                        <i class="fa-solid fa-database"></i> 1. Big Data & ML Fund.
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m2-features">
+                        <i class="fa-solid fa-calculator"></i> 2. Feature Engineering
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m3-development">
+                        <i class="fa-solid fa-sliders"></i> 3. Model Development
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m4-pipelines">
+                        <i class="fa-solid fa-diagram-project"></i> 4. ML Pipelines
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m5-production">
+                        <i class="fa-solid fa-rocket"></i> 5. Production Serving
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" data-target="module-m6-genai">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 6. GenAI & LLMs
+                    </a>
+                </li>
+                
+                <li class="nav-category">Assessment</li>
+                <li>
+                    <a href="#" class="nav-link" data-target="practice-exam">
+                        <i class="fa-solid fa-pen-to-square"></i> Practice Exam
+                    </a>
+                </li>
+                
+                <li class="nav-category">Reference</li>
+                <li>
+                    <a href="#" class="nav-link" data-target="cheat-sheet">
+                        <i class="fa-solid fa-bookmark"></i> Study Cheat Sheet
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <span>Google Cloud Cert Prep</span>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="main-content">
+            
+            <!-- SECTION 1: DASHBOARD OVERVIEW -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <span class="section-tag">Interactive Workspace</span>
+                    <h1 class="section-title">Professional ML Engineer Prep</h1>
+                    <p class="section-desc">Study the 6 modules aligned directly with the Google Cloud skills portal path, test hyperparameter optimizations with simulators, and take the 25-question scenario practice exam.</p>
+                </div>
+                
+                <!-- Dashboard Grid cards -->
+                <div class="dashboard-grid">
+                    <!-- Module 1 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-database"></i>
+                            <span>1. Big Data & ML Fundamentals</span>
+                        </div>
+                        <p class="card-desc">GCP infrastructure basics. Map business cases to storage (BigQuery, GCS) and model training environments (AutoML, Vertex AI APIs).</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m1">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m1-fundamentals]').click()">Start Module</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Module 2 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>2. Feature Engineering & Preproc.</span>
+                        </div>
+                        <p class="card-desc">Engine feature extraction pipelines using Dataflow, BigQuery ML, TF.Transform (TFX), and centralize lookups with Vertex AI Feature Store.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m2">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m2-features]').click()">Start Module</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Module 3 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>3. ML Model Dev & Vizier Tuning</span>
+                        </div>
+                        <p class="card-desc">Orchestrate Vertex AI custom training, select hardware (GPUs vs TPUs), write distributed training jobs, and tune hyperparameters using Vizier.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m3">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m3-development]').click()">Start Module</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Module 4 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>4. ML Orchestration & Pipelines</span>
+                        </div>
+                        <p class="card-desc">Design automated model training, validation, and deployment DAGs using Vertex AI Pipelines, Kubeflow Pipelines SDK, and TFX components.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m4">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m4-pipelines]').click()">Start Module</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Module 5 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span>5. Production Serving & Monitoring</span>
+                        </div>
+                        <p class="card-desc">Serve models via Vertex Prediction, build custom serving containers, deploy canary models, and monitor online performance for skew and drift.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m5">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m5-production]').click()">Start Module</button>
+                        </div>
+                    </div>
+
+                    <!-- Module 6 Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>6. GenAI & LLMs on GCP</span>
+                        </div>
+                        <p class="card-desc">Leverage foundation models in Model Garden, prototype system prompts in Vertex AI Studio, configure parameters, and implement RAG/PEFT.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Progress: <strong id="dash-progress-m6">0%</strong></span>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-target=module-m6-genai]').click()">Start Module</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Mock Exam Card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Comprehensive Mock Exam</span>
+                        </div>
+                        <p class="card-desc">Test your readiness with 25 premium, scenario-based multiple choice questions mapped directly to the complete certification blueprint.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                            <span class="slide-counter">Completed: <strong id="dash-progress-exam">0%</strong></span>
+                            <button class="btn btn-purple" onclick="document.querySelector('[data-target=practice-exam]').click()">Launch Exam</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 1: BIG DATA & ML FUNDAMENTALS -->
+            <section id="module-m1-fundamentals" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 01 • Cloud Architecture</span>
+                    <h1 class="section-title">Big Data & ML Fundamentals on GCP</h1>
+                    <p class="section-desc">Learn how to frame machine learning problems, ingest enterprise datasets, select appropriate storage systems, and decide between pre-trained APIs and AutoML.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m1_fundamentals" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m1_fundamentals-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m1_fundamentals" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m1_fundamentals-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 2: FEATURE ENGINEERING & PREPROCESSING -->
+            <section id="module-m2-features" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 02 • Data Pipelines</span>
+                    <h1 class="section-title">Feature Engineering & Preprocessing</h1>
+                    <p class="section-desc">Analyze raw dataset transformations, scaling techniques, and the MLOps pipelines that bridge batch and streaming feature storage.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m2_features" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m2_features-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m2_features" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m2_features-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <!-- SVG Feature Store Ingestion Simulator -->
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Interactive Feature Store serving & Ingestion Simulator</span>
+                    </div>
+                    <p class="card-desc">Visualize feature updates flowing into the registry and compare low-latency online serving with analytical offline serving.</p>
+                    
+                    <div class="simulator-layout">
+                        <div class="simulator-controls">
+                            <div class="form-group">
+                                <label class="form-label" for="fs-ingest-select">
+                                    <span>Ingestion Pipeline</span>
+                                    <span style="color: var(--text-muted);">Source Data</span>
+                                </label>
+                                <select id="fs-ingest-select" class="form-select">
+                                    <option value="batch">Batch (BigQuery Tables - Periodic Sync)</option>
+                                    <option value="streaming">Streaming (Pub/Sub Events - Real-time)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="fs-serve-select">
+                                    <span>Serving Destination</span>
+                                    <span style="color: var(--text-muted);">Model Interface</span>
+                                </label>
+                                <select id="fs-serve-select" class="form-select">
+                                    <option value="online">Online Serving (Low Latency Real-time Inference)</option>
+                                    <option value="offline">Offline Serving (Historical Point-in-Time Training Export)</option>
+                                </select>
+                            </div>
+                            
+                            <button id="fs-simulate-btn" class="btn btn-primary" style="margin-top: 10px;">
+                                <i class="fa-solid fa-play"></i> Trigger Ingestion & serving Flow
+                            </button>
+                        </div>
+                        
+                        <div class="simulator-visualizer">
+                            <div class="fs-stat-badge">
+                                <span>Serving Latency:</span>
+                                <span id="fs-latency-val" class="fs-stat-val">-- ms</span>
+                            </div>
+                            
+                            <svg class="fs-flow-svg" viewBox="0 0 500 250">
+                                <path id="line-bq-fs" class="fs-line" d="M 80 50 L 250 120" />
+                                <path id="line-pubsub-fs" class="fs-line" d="M 80 190 L 250 120" />
+                                <path id="line-fs-online" class="fs-line" d="M 250 120 L 420 50" />
+                                <path id="line-fs-offline" class="fs-line" d="M 250 120 L 420 190" />
+                                
+                                <g id="node-bq" class="fs-node-g">
+                                    <rect x="20" y="25" width="100" height="50" rx="8" class="fs-node" />
+                                    <text x="70" y="50" class="fs-text">BigQuery</text>
+                                    <text x="70" y="62" class="fs-subtext">(Batch Source)</text>
+                                </g>
+                                
+                                <g id="node-pubsub" class="fs-node-g">
+                                    <rect x="20" y="165" width="100" height="50" rx="8" class="fs-node" />
+                                    <text x="70" y="190" class="fs-text">Pub/Sub + Dataflow</text>
+                                    <text x="70" y="202" class="fs-subtext">(Streaming Source)</text>
+                                </g>
+                                
+                                <g id="node-fs" class="fs-node-g">
+                                    <rect x="180" y="95" width="140" height="50" rx="8" class="fs-node" />
+                                    <text x="250" y="120" class="fs-text">Vertex AI Feature Store</text>
+                                    <text x="250" y="132" class="fs-subtext">(Central Registry)</text>
+                                </g>
+                                
+                                <g id="node-online" class="fs-node-g">
+                                    <rect x="370" y="25" width="110" height="50" rx="8" class="fs-node-serving" />
+                                    <text x="425" y="50" class="fs-text">Online API</text>
+                                    <text x="425" y="62" class="fs-subtext">(Bigtable Serving)</text>
+                                </g>
+                                
+                                <g id="node-offline" class="fs-node-g">
+                                    <rect x="370" y="165" width="110" height="50" rx="8" class="fs-node-serving" />
+                                    <text x="425" y="190" class="fs-text">Offline Export</text>
+                                    <text x="425" y="202" class="fs-subtext">(BigQuery Export)</text>
+                                </g>
+                            </svg>
+                            
+                            <pre id="fs-log-console" class="fs-console"><span class="code-comment">// System logs will be shown here...</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 3: MODEL DEVELOPMENT & SCALING -->
+            <section id="module-m3-development" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 03 • Model Engineering</span>
+                    <h1 class="section-title">ML Model Development & Tuning</h1>
+                    <p class="section-desc">Understand Vertex AI Custom Training container options, distributed training architectures on TPUs/GPUs, and hyperparameter tuning with Vertex AI Vizier.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m3_development" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m3_development-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m3_development" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m3_development-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Vizier Simulator -->
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Vertex AI Vizier - Hyperparameter Search Space Simulator</span>
+                    </div>
+                    <p class="card-desc">Observe how Vizier uses Bayesian Optimization algorithms to search for the best combinations of Learning Rate and Batch Size to minimize evaluation loss.</p>
+                    
+                    <div class="simulator-layout">
+                        <div class="simulator-controls">
+                            <div class="form-group">
+                                <label class="form-label" for="vizier-algorithm">
+                                    <span>Search Algorithm</span>
+                                    <span style="color: var(--text-muted);">Trial Optimization</span>
+                                </label>
+                                <select id="vizier-algorithm" class="form-select">
+                                    <option value="bayesian">Bayesian Optimization (GCP Default)</option>
+                                    <option value="random">Random Search (Standard Grid Baseline)</option>
+                                </select>
+                            </div>
+                            <button id="vizier-run-btn" class="btn btn-primary" style="margin-top: 15px;">
+                                <i class="fa-solid fa-magnifying-glass"></i> Launch Vizier Search Study
+                            </button>
+                        </div>
+                        
+                        <div class="vizier-chart-card">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Parameter Space Search (Loss Target)</span>
+                            <div class="fs-stat-badge" style="top: 15px; right: 15px;">
+                                <span>Optimal Loss:</span>
+                                <span id="vizier-best-loss" class="fs-stat-val">--</span>
+                            </div>
+                            
+                            <div class="vizier-grid" id="vizier-dot-grid">
+                                <span class="vizier-grid-label-y">Batch Size (8 to 512)</span>
+                                <span class="vizier-grid-label-x">Learning Rate (1e-5 to 1e-1)</span>
+                                <!-- Trial dots rendered here by JS -->
+                            </div>
+                            
+                            <pre id="vizier-log" class="fs-console" style="margin-top: 25px; height: 95px;"><span class="code-comment">// Vizier study metric logs will appear here...</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 4: ML ORCHESTRATION & PIPELINES -->
+            <section id="module-m4-pipelines" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 04 • Orchestration</span>
+                    <h1 class="section-title">ML Orchestration & Vertex AI Pipelines</h1>
+                    <p class="section-desc">Automate your model lineage, coordinate Kubeflow SDK workflows, and track artifact transformations across standard TFX environments.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m4_pipelines" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m4_pipelines-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m4_pipelines" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m4_pipelines-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 5: PRODUCTION ML SYSTEMS & SERVING -->
+            <section id="module-m5-production" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 05 • Production MLOps</span>
+                    <h1 class="section-title">Serving & Vertex AI Model Monitoring</h1>
+                    <p class="section-desc">Configure online prediction endpoints, run traffic canary deployments, and monitor your model predictions for statistical feature skew and data drift.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m5_production" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m5_production-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m5_production" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m5_production-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Model Monitoring Drift Simulator -->
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Vertex AI Model Monitor - Population Stability Index (PSI) Tracker</span>
+                    </div>
+                    <p class="card-desc">Slide the "Data Drift Severity" slider to simulate incoming request feature shift. If PSI climbs above the <strong>0.20 Threshold</strong>, the system triggers alerts for retraining.</p>
+                    
+                    <div class="simulator-layout">
+                        <div class="simulator-controls">
+                            <!-- Slider -->
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span class="slider-title">Data Drift Severity</span>
+                                    <span id="drift-val-label" class="slider-val">Baseline (0.00)</span>
+                                </div>
+                                <input type="range" id="drift-severity-slider" class="custom-slider" min="0.0" max="1.0" step="0.1" value="0.0">
+                            </div>
+                            
+                            <button id="drift-simulate-btn" class="btn btn-primary">
+                                <i class="fa-solid fa-stethoscope"></i> Execute Monitoring Scan
+                            </button>
+                            
+                            <div id="monitor-alert-box" class="monitor-alert-banner">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span><strong>[CRITICAL ALERT]</strong> High Data Drift Detected! PSI metric has crossed the 0.20 trigger limit. Automated retraining pipeline initialized.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="monitor-chart-card">
+                            <div class="fs-stat-badge" style="top: 15px; right: 15px;">
+                                <span>Current PSI:</span>
+                                <span id="monitor-psi-display" class="fs-stat-val">0.02</span>
+                            </div>
+                            
+                            <!-- SVG Chart -->
+                            <svg class="monitor-svg" id="monitor-svg-chart">
+                                <!-- Grid Lines -->
+                                <line x1="40" y1="20" x2="480" y2="20" stroke="rgba(255,255,255,0.03)" />
+                                <line x1="40" y1="65" x2="480" y2="65" stroke="rgba(255,255,255,0.03)" />
+                                <line x1="40" y1="110" x2="480" y2="110" stroke="rgba(255,255,255,0.03)" />
+                                <line x1="40" y1="130" x2="480" y2="130" stroke="rgba(255,255,255,0.08)" /> <!-- threshold line position (PSI=0.20) -->
+                                <line x1="40" y1="150" x2="480" y2="150" stroke="rgba(255,255,255,0.1)" /> <!-- baseline x-axis -->
+                                
+                                <text x="30" y="25" fill="var(--text-muted)" font-size="9" text-anchor="end">0.50</text>
+                                <text x="30" y="68" fill="var(--text-muted)" font-size="9" text-anchor="end">0.30</text>
+                                <text x="30" y="113" fill="var(--text-muted)" font-size="9" text-anchor="end">0.20</text>
+                                <text x="30" y="153" fill="var(--text-muted)" font-size="9" text-anchor="end">0.00</text>
+                                
+                                <!-- Alert Threshold Indicator -->
+                                <line id="monitor-threshold" x1="40" y1="110" x2="480" y2="110" class="monitor-threshold-line" />
+                                <text x="470" y="102" fill="var(--accent-pink)" font-size="8" text-anchor="end">Retrain Threshold (PSI = 0.20)</text>
+                                
+                                <!-- Dynamic Data Line -->
+                                <path id="monitor-line-path" class="monitor-data-line" d="M 40 148 L 100 147 L 160 146 L 220 148 L 280 145 L 340 148 L 400 147 L 460 148" />
+                            </svg>
+                            
+                            <pre id="monitor-log-console" class="fs-console" style="margin-top: 15px; height: 95px;"><span class="code-comment">// Monitoring health check history logs...</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 6: GENERATIVE AI & LLMS ON GCP -->
+            <section id="module-m6-genai" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Module 06 • GenAI Foundations</span>
+                    <h1 class="section-title">Generative AI & LLMs on Google Cloud</h1>
+                    <p class="section-desc">Understand prompt engineering techniques, model tuning configurations, and the parameters (Temp, Top-K, Top-P) that dictate transformer output behavior.</p>
+                </div>
+                
+                <div class="slide-deck-container">
+                    <div id="slide-deck-m6_genai" class="slide-content-area"></div>
+                    <div class="slide-footer-controls">
+                        <button id="btn-m6_genai-prev" class="btn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span id="counter-m6_genai" class="slide-counter">Slide 1 of 10</span>
+                        <button id="btn-m6_genai-next" class="btn">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Sandbox Playground -->
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>LLM Parameter Tuning & Token Probability Sandbox</span>
+                    </div>
+                    <p class="card-desc">Adjust hyperparameters and witness how they filter and re-distribute probabilities during next-token prediction.</p>
+                    
+                    <div class="sandbox-layout">
+                        <div class="sandbox-chat-area">
+                            <div id="sandbox-chat-history" class="sandbox-history">
+                                <div class="chat-bubble assistant">
+                                    Select a prompt, adjust the sliders to control randomness, and click "Simulate Generation" to see the next token output!
+                                </div>
+                            </div>
+                            
+                            <div class="sandbox-input-row">
+                                <select id="llm-prompt-select" class="form-select sandbox-input">
+                                    <option value="Machine learning is">"Machine learning is..."</option>
+                                    <option value="Generative AI will">"Generative AI will..."</option>
+                                    <option value="Vertex AI Feature Store solves">"Vertex AI Feature Store solves..."</option>
+                                    <option value="The transformer attention mechanism">"The transformer attention mechanism..."</option>
+                                </select>
+                                <button id="llm-generate-btn" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane"></i> Simulate Generation
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="prob-visualizer-container">
+                            <div class="prob-title">
+                                <span>Token Probability Distribution</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Next Token Logits</span>
+                            </div>
+                            
+                            <div style="margin-top: 10px;">
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span class="slider-title">Temperature (Temp)</span>
+                                        <span id="llm-temp-val" class="slider-val">1.00</span>
+                                    </div>
+                                    <input type="range" id="llm-temp-slider" class="custom-slider" min="0.01" max="2.0" step="0.05" value="1.0">
+                                </div>
+                                
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span class="slider-title">Top-K</span>
+                                        <span id="llm-topk-val" class="slider-val">5</span>
+                                    </div>
+                                    <input type="range" id="llm-topk-slider" class="custom-slider" min="1" max="7" step="1" value="5">
+                                </div>
+                                
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span class="slider-title">Top-P (Nucleus)</span>
+                                        <span id="llm-topp-val" class="slider-val">0.90</span>
+                                    </div>
+                                    <input type="range" id="llm-topp-slider" class="custom-slider" min="0.1" max="1.0" step="0.05" value="0.9">
+                                </div>
+                            </div>
+                            
+                            <div id="llm-prob-chart-list" class="prob-chart-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: PRACTICE EXAM -->
+            <section id="practice-exam" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Learning Validation</span>
+                    <h1 class="section-title">Certification Practice Exam</h1>
+                    <p class="section-desc">Validate your knowledge with 25 scenario-based multiple choice questions written in the official GCP Professional ML Engineer exam format.</p>
+                </div>
+                
+                <div class="quiz-container">
+                    <div id="quiz-landing-container" class="results-container">
+                        <div style="font-size: 4rem; color: var(--accent-blue);">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h2 class="section-title">Google Cloud ML Certification Mock Test</h2>
+                        <p class="section-desc" style="margin: 0 auto; max-width: 650px;">
+                            This comprehensive mock exam contains <strong>25 scenario questions</strong> covering Big Data ML, Feature Engineering, Custom Training, Pipelines, Serving architectures, and GenAI models.
+                            You will receive instant feedback and explanations after selecting each answer.
+                        </p>
+                        <button id="quiz-start-btn" class="btn btn-purple btn-lg" style="padding: 14px 28px; font-size: 1rem;">
+                            Start Assessment
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-active-container" style="display: none;">
+                        <div class="quiz-header">
+                            <span id="quiz-question-number" class="quiz-question-number">Question 1 of 25</span>
+                            <div class="quiz-timer">
+                                <i class="fa-regular fa-clock"></i>
+                                <span id="quiz-timer-text">00:00</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <p id="quiz-question-text" class="quiz-question-text">
+                                Question text scenario goes here...
+                            </p>
+                        </div>
+                        
+                        <div id="quiz-choices-container" class="quiz-choices"></div>
+                        <div id="quiz-explanation-box" class="quiz-explanation"></div>
+                        
+                        <div class="quiz-footer">
+                            <div></div>
+                            <button id="quiz-submit-btn" class="btn btn-primary" disabled>Submit Answer</button>
+                            <button id="quiz-next-btn" class="btn btn-purple" style="display: none;">Next Question</button>
+                        </div>
+                    </div>
+                    
+                    <div id="quiz-results-container" class="results-container" style="display: none;">
+                        <div id="quiz-radial-progress" class="results-radial">
+                            <div class="results-radial-text">
+                                <span id="quiz-score-val" class="results-score">0</span>
+                                <span id="quiz-total-val" class="results-total">out of 25</span>
+                            </div>
+                        </div>
+                        
+                        <h2 class="section-title">Test Results</h2>
+                        <div id="quiz-commentary" class="results-commentary">
+                            Loading your performance report...
+                        </div>
+                        
+                        <div style="width: 100%; max-width: 600px; margin-top: 20px;">
+                            <h3 class="card-title" style="margin-bottom: 12px; justify-content: center;">Detailed Question Review</h3>
+                            <div id="quiz-review-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                        </div>
+                        
+                        <button id="quiz-retake-btn" class="btn btn-primary">Retake Exam</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: RESOURCE CHEAT SHEET -->
+            <section id="cheat-sheet" class="content-section">
+                <div class="section-header">
+                    <span class="section-tag">Quick Reference</span>
+                    <h1 class="section-title">Certification Study Cheat Sheet</h1>
+                    <p class="section-desc">Key SQL patterns, Kubeflow DSL commands, Model Monitoring settings, and CLI utilities for quick recall.</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Data Engineering BQML -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-code"></i>
+                            <span>BigQuery ML SQL Syntax (Modules 1 & 2)</span>
+                        </div>
+                        <div class="code-wrapper">
+                            <div class="code-header"><span>Standard BQML Syntax</span></div>
+                            <pre class="code-content" style="color: #61afef;"><span class="code-comment"># Create and train a model directly in BQ</span>
+<span class="code-keyword">CREATE OR REPLACE MODEL</span> `my_dataset.logistic_model`
+<span class="code-keyword">OPTIONS</span>(
+  model_type=<span class="code-string">'logistic_reg'</span>,
+  input_label_cols=[<span class="code-string">'churned'</span>],
+  auto_class_weights=<span class="code-keyword">TRUE</span>
+) <span class="code-keyword">AS</span>
+<span class="code-keyword">SELECT</span>
+  age,
+  transaction_count,
+  churned
+<span class="code-keyword">FROM</span>
+  `my_project.my_dataset.user_features`;</pre>
+                        </div>
+                        <p class="card-desc" style="margin-top: 15px; margin-bottom: 0;">
+                            Know that BQML runs model training natively inside BigQuery's slot architecture. Best for rapid tabular modeling without exporting data.
+                        </p>
+                    </div>
+                    
+                    <!-- TF Transform card -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>TF.Transform serving vs Dataflow (Module 2)</span>
+                        </div>
+                        <ul class="slide-body" style="list-style: none; font-size: 0.85rem; padding-left: 0;">
+                            <li style="margin-bottom: 8px;"><strong>Dataflow only:</strong> Great for preprocessing training data, but leads to skew if serving calculations differ from training.</li>
+                            <li style="margin-bottom: 8px;"><strong>TF.Transform:</strong> Outputs a preprocessing graph that is exported *as part of the model*.</li>
+                            <li style="margin-bottom: 8px;"><strong>Key Benefit:</strong> Preprocessing logic is identical during batch training and online prediction serving, preventing skew.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Kubeflow Pipelines -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-terminal"></i>
+                            <span>Vertex AI Pipelines DSL (Module 4)</span>
+                        </div>
+                        <div class="code-wrapper">
+                            <div class="code-header"><span>KFP DSL python SDK</span></div>
+                            <pre class="code-content" style="color: #abb2bf;"><span class="code-keyword">from</span> kfp.v2 <span class="code-keyword">import</span> dsl
+
+<span class="code-keyword">@dsl.pipeline</span>(
+    name=<span class="code-string">"training-pipeline"</span>,
+    pipeline_root=<span class="code-string">"gs://my-bucket/root"</span>
+)
+<span class="code-keyword">def</span> <span class="code-function">pipeline</span>(project: <span class="code-function">str</span>):
+    train_op = custom_train_component(project)
+    deploy_op = deploy_model_component(
+        model=train_op.outputs[<span class="code-string">"model"</span>]
+    )</pre>
+                        </div>
+                        <p class="card-desc" style="margin-top: 15px; margin-bottom: 0;">
+                            Kubeflow Pipelines (KFP) compilation outputs a JSON configuration file executed by Vertex AI Pipelines. Serverless, managed execution.
+                        </p>
+                    </div>
+                    
+                    <!-- Model Monitor configurations -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Model Monitoring Settings (Module 5)</span>
+                        </div>
+                        <ul class="slide-body" style="list-style: none; font-size: 0.85rem; padding-left: 0;">
+                            <li style="margin-bottom: 8px;"><strong>Training-Serving Skew:</strong> Compares serving feature distributions to baseline training data (e.g. TFRecord in GCS).</li>
+                            <li style="margin-bottom: 8px;"><strong>Prediction Drift:</strong> Compares active serving inputs day-over-day (detects feature distribution shifts over time).</li>
+                            <li style="margin-bottom: 8px;"><strong>PSI threshold:</strong> A standard trigger is <strong>PSI > 0.20</strong>, indicating substantial distribution shift requiring alerting/retraining.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Script core logic -->
+    <script src="app.js"></script>
+</body>
+</html>

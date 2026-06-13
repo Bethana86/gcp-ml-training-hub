@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP MLOps: Vertex AI Feature Store Presentation</title>
+    <!-- CSS slide styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Progress Bar Indicator -->
+        <div class="progress-bar-container">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+
+        <!-- SLIDE 1: TITLE SLIDE -->
+        <section class="slide title-slide active">
+            <span class="slide-category">Google Cloud MLOps</span>
+            <h1 class="slide-title">Vertex AI <span>Feature Store</span></h1>
+            <p class="slide-subtitle">Unifying ML Feature Engineering, Low-Latency Serving, and Point-in-Time Correct Offline Datasets</p>
+            <div class="title-footer">
+                <span>Presenter: <strong>Bethanasamy Rajamani</strong></span>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: THE CORE MLOPS CHALLENGES -->
+        <section class="slide">
+            <span class="slide-category">The Problem</span>
+            <h2 class="slide-title">Core Challenges in Production ML</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Train-Serve Skew:</strong> ML models fail when prediction features are calculated differently than training features.</li>
+                        <li><strong>Data Leakage:</strong> Incorporating "future data" into training sets during joins, invalidating offline evaluation validation.</li>
+                        <li><strong>Redundant Engineering:</strong> Separate data engineering teams re-calculating the exact same feature values, driving up storage/compute costs.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Real-World Example (Skew & Leakage)</strong>
+                        A credit card fraud detector checks transaction velocities. If training calculated velocities using daily averages, but online inference queries them using 5-minute windows, the mismatch (skew) causes false negatives.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Traditional Databases Fall Short</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;">
+                        Relational databases (SQL) and analytical warehouses (BigQuery) cannot serve features with sub-15ms latency at scale. Conversely, transactional databases lack point-in-time snapshot mechanics, creating massive data leakage risks during dataset exports.
+                    </p>
+                    <p style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 500;">
+                        Example: Both fraud and billing teams writing two separate Spark jobs to calculate `daily_user_active_hours` leads to code redundancy and cost waste.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: WHAT IS VERTEX AI FEATURE STORE? -->
+        <section class="slide">
+            <span class="slide-category">Architectural Overview</span>
+            <h2 class="slide-title">What is Vertex AI Feature Store?</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="margin-bottom: 20px; font-weight: 500; color: var(--text-primary);">A centralized, fully-managed Google Cloud registry to share, discover, and serve ML features.</p>
+                    <ul>
+                        <li><strong>Single Source of Truth:</strong> Unifies preprocessing pipelines across batch and real-time.</li>
+                        <li><strong>Serverless Scale:</strong> No infrastructure management. Scaling Bigtable and BigQuery slots are handled entirely by Google Cloud.</li>
+                        <li><strong>Integrations:</strong> Built-in lineage hooks into Vertex AI Model Registry, Pipelines, and Model Monitoring.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Serving Example</strong>
+                        A ride-sharing app uses online serving to retrieve driver ratings in 8ms during matching. For historical pricing analysis, it uses offline serving to export monthly coordinates.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Operational Benefits</span>
+                    </div>
+                    <div class="benefits-list" style="display: flex; flex-direction: column; gap: 16px; margin-top: 15px;">
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-bolt" style="color: var(--accent-blue);"></i>
+                                <span>Sub-15ms Online Serving Latency</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Powered by Cloud Bigtable key-value storage, delivering high-throughput gRPC lookups for real-time model inference at scale.
+                            </p>
+                        </div>
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-clone" style="color: var(--accent-green);"></i>
+                                <span>Zero-Copy BigQuery Views Integration</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Queries BigQuery tables or logical views directly without copying physical data, eliminating duplication storage costs and pipeline lags.
+                            </p>
+                        </div>
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-route" style="color: var(--accent-pink);"></i>
+                                <span>Fully Auditable Metadata Lineage</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Integrated with Vertex ML Metadata to track feature origin, transformations, registry audits, and downstream model consumers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: DATA MODELING HIERARCHY -->
+        <section class="slide">
+            <span class="slide-category">Data Modeling</span>
+            <h2 class="slide-title">Vertex AI Feature Store Hierarchy</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Entity Type:</strong> Represents a primary key tracking data records (e.g. <code>user_id</code>, <code>product_id</code>).</li>
+                        <li><strong>Feature Group:</strong> Points directly to a source table/view in BigQuery containing attributes.</li>
+                        <li><strong>Feature View:</strong> A read-only representation of features. Synchronizes directly with BigQuery without copying raw data.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Real-World Mapping Example</strong>
+                        Entity Type = <code>customer_id</code>. Feature Group = <code>customer_orders</code> (linked to BigQuery). Feature View = <code>checkout_view</code> (exposing features like <code>last_order_amount</code>).
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-circle-nodes"></i>
+                        <span>Key Design Pattern</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        You define Feature Groups to map BigQuery schemas. You register individual features within that group. Feature Views then expose specific subsets of these features to online serving APIs.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: INGESTION ARCHITECTURE -->
+        <section class="slide">
+            <span class="slide-category">Ingestion Pipelines</span>
+            <h2 class="slide-title">Batch & Streaming Ingestions</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Batch Ingestion (BigQuery):</strong> Scheduled sync jobs that pull pre-calculated features. Animate packets showing scheduled sync runs.</li>
+                        <li><strong>Streaming Ingestion (Pub/Sub):</strong> Ingests features in real-time. Events flow through Pub/Sub and Dataflow directly to the Feature Store.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Pipeline Example</strong>
+                        Streaming ingestion writes real-time customer clicks from Pub/Sub to the online store instantly. Batch ingestion synchronizes user credit ratings from BigQuery every midnight.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Active Data Ingestion Pipeline Flows</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Markers for Arrow Heads -->
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.4)" />
+                            </marker>
+                        </defs>
+
+                        <!-- Connection Paths -->
+                        <path id="path-bq-fs" class="flow-path active-pink" d="M 110,40 Q 185,110 250,110" />
+                        <path id="path-pub-fs" class="flow-path active-green" d="M 110,180 Q 185,110 250,110" />
+                        
+                        <!-- Flow dots (Batch) -->
+                        <circle r="4" fill="var(--accent-pink)">
+                            <animateMotion dur="4s" repeatCount="indefinite" path="M 110,40 Q 185,110 250,110" begin="0s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-pink)">
+                            <animateMotion dur="4s" repeatCount="indefinite" path="M 110,40 Q 185,110 250,110" begin="2s" />
+                        </circle>
+
+                        <!-- Flow dots (Streaming) -->
+                        <circle r="4" fill="var(--accent-green)">
+                            <animateMotion dur="2s" repeatCount="indefinite" path="M 110,180 Q 185,110 250,110" begin="0s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-green)">
+                            <animateMotion dur="2s" repeatCount="indefinite" path="M 110,180 Q 185,110 250,110" begin="0.7s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-green)">
+                            <animateMotion dur="2s" repeatCount="indefinite" path="M 110,180 Q 185,110 250,110" begin="1.4s" />
+                        </circle>
+
+                        <!-- Node: BigQuery -->
+                        <g transform="translate(10, 20)">
+                            <rect x="0" y="0" width="100" height="40" rx="8" class="node-circle" />
+                            <text x="50" y="22" fill="var(--text-primary)" font-size="9" text-anchor="middle" font-weight="600">BigQuery</text>
+                            <text x="50" y="32" fill="var(--text-muted)" font-size="7" text-anchor="middle">(Batch Source)</text>
+                        </g>
+                        
+                        <!-- Node: Pub/Sub -->
+                        <g transform="translate(10, 160)">
+                            <rect x="0" y="0" width="100" height="40" rx="8" class="node-circle" />
+                            <text x="50" y="22" fill="var(--text-primary)" font-size="9" text-anchor="middle" font-weight="600">Pub/Sub</text>
+                            <text x="50" y="32" fill="var(--text-muted)" font-size="7" text-anchor="middle">(Streaming Source)</text>
+                        </g>
+                        
+                        <!-- Node: Feature Store (Center) -->
+                        <g transform="translate(200, 90)">
+                            <rect x="0" y="0" width="100" height="40" rx="8" class="node-circle pulse" />
+                            <text x="50" y="22" fill="var(--text-primary)" font-size="9" text-anchor="middle" font-weight="600">Feature Store</text>
+                            <text x="50" y="32" fill="var(--accent-blue)" font-size="7" text-anchor="middle" font-weight="500">(Active Registry)</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: ONLINE SERVING ARCHITECTURE -->
+        <section class="slide">
+            <span class="slide-category">Serving (Low Latency)</span>
+            <h2 class="slide-title">Online Serving Mechanics</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Cloud Bigtable:</strong> The default serving engine. Scaled dynamically by Google Cloud to support massive, concurrent online requests.</li>
+                        <li><strong>Read Feature Values API:</strong> Online endpoints request feature values by passing the Entity ID (e.g. <code>user_id</code>) and receiving vectors in milliseconds.</li>
+                        <li><strong>Zero-Latency Cache:</strong> Feature Store buffers features to prevent server overloads during web traffic spikes.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>gRPC Serving Example</strong>
+                        The inference server queries <code>user_1984</code> on port 8080 and fetches the feature vector <code>[0.85 (ctr), 'Premium' (tier)]</code> from Cloud Bigtable in 6.8ms.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Online serving gRPC query loop</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Request Path -->
+                        <path class="flow-path active-green" d="M 70,95 L 230,95" />
+                        <!-- Response Path -->
+                        <path class="flow-path active-blue" d="M 230,125 L 70,125" style="stroke: var(--accent-blue); stroke-dasharray: 6,6; animation: strokeSlide 1s linear infinite;" />
+
+                        <!-- Request Dot -->
+                        <circle r="5" fill="var(--accent-green)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 70,95 L 230,95" begin="0s" />
+                        </circle>
+                        <!-- Response Dot -->
+                        <circle r="5" fill="var(--accent-blue)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 230,125 L 70,125" begin="1.2s" />
+                        </circle>
+
+                        <!-- Node: Client model -->
+                        <g transform="translate(10, 90)">
+                            <circle cx="20" cy="20" r="25" class="node-circle" />
+                            <text x="20" y="23" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Model API</text>
+                        </g>
+
+                        <!-- Node: Feature Store -->
+                        <g transform="translate(250, 90)">
+                            <circle cx="20" cy="20" r="25" class="node-circle pulse-green" />
+                            <text x="20" y="23" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Bigtable</text>
+                        </g>
+
+                        <!-- Latency stopwatch counter -->
+                        <g transform="translate(125, 65)">
+                            <rect x="0" y="0" width="70" height="20" rx="4" fill="rgba(0,0,0,0.6)" stroke="var(--border-color)" />
+                            <text x="35" y="14" class="latency-text-field" text-anchor="middle">
+                                <tspan class="latency-timer-tick">6.8ms</tspan>
+                            </text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 7: OFFLINE SERVING & HISTORICAL JOINS -->
+        <section class="slide">
+            <span class="slide-category">Serving (Analytical)</span>
+            <h2 class="slide-title">Offline Serving & point-in-Time Joins</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Point-in-Time joins:</strong> Prevents data leakage by retrieving feature values exactly as they existed at the timestamp of a historical training event.</li>
+                        <li><strong>Batch Exports:</strong> Exports features to BigQuery or Cloud Storage folders to build massive training sets.</li>
+                        <li><strong>Scale:</strong> Runs analytical joins across millions of training records, leveraging BigQuery slot allocations.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Historical Join Example</strong>
+                        To train a churn model on a checkout event from Oct 5, 2:00 PM, the Feature Store runs a point-in-time join that retrieves features prior to 2:00 PM, ignoring any subsequent activity.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Point-in-Time "Time Travel" Join</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Horizontal Timeline Axis -->
+                        <line x1="40" y1="130" x2="360" y2="130" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round" style="opacity: 0.3;" />
+                        
+                        <!-- Timeline Markers -->
+                        <!-- Event 1 (100) -->
+                        <circle class="marker-dot marker-dot-1" cx="100" cy="130" r="6" />
+                        <text x="100" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Feature Update 1</text>
+                        
+                        <!-- Event 2 (180) -->
+                        <circle class="marker-dot marker-dot-2" cx="180" cy="130" r="6" />
+                        <text x="180" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Feature Update 2</text>
+                        
+                        <!-- Event 3 (260) -->
+                        <circle class="marker-dot marker-dot-3" cx="260" cy="130" r="6" />
+                        <text x="260" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Feature Update 3</text>
+
+                        <!-- Vertical Sliding Timeline Line (Join Event Time) -->
+                        <line class="timeline-slider-line" x1="40" y1="50" x2="40" y2="170" />
+                        <text x="150" y="195" fill="var(--accent-blue)" font-size="9" text-anchor="middle" font-weight="600">Dynamic Join Timestamp (T_event)</text>
+                        
+                        <!-- Leakage warning alert text -->
+                        <text x="260" y="150" class="leakage-warning-banner">[Future Data Blocked]</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: VERTEX AI SDK (PYTHON) -->
+        <section class="slide">
+            <span class="slide-category">Developer Guide</span>
+            <h2 class="slide-title">Vertex AI SDK (Python)</h2>
+            <div class="slide-body">
+                <p style="margin-bottom: 10px;">Interacting with Vertex AI Feature Store programmatically:</p>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>Python Client SDK</span>
+                    </div>
+                    <pre class="code-content"><span class="code-keyword">from</span> google.cloud <span class="code-keyword">import</span> aiplatform
+
+aiplatform.init(project=<span class="code-string">"my-gcp-project"</span>, location=<span class="code-string">"us-central1"</span>)
+
+<span class="code-comment"># Define reference to registered Feature View</span>
+feature_view = aiplatform.FeatureView(
+    feature_view_name=<span class="code-string">"user_features"</span>,
+    feature_online_store_id=<span class="code-string">"user_online_store"</span>
+)
+
+<span class="code-comment"># Fetch real-time online feature values</span>
+response = feature_view.read_feature_values(
+    entity_ids=[<span class="code-string">"user_10294"</span>]
+)
+<span class="code-function">print</span>(response.values)</pre>
+                </div>
+                <div class="example-box">
+                    <strong>Endpoint Integration Example</strong>
+                    This Python query is integrated inside a web-serving Flask/FastAPI app to dynamically fetch driver ratings and enrich matching payloads before passing variables to model predictors.
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 9: GOOGLE CLOUD CLI REFERENCE -->
+        <section class="slide">
+            <span class="slide-category">Operations Guide</span>
+            <h2 class="slide-title">Google Cloud CLI (gcloud) Reference</h2>
+            <div class="slide-body">
+                <p style="margin-bottom: 10px;">Managing Feature Store infrastructure using terminal commands:</p>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>gcloud vertex-ai CLI tools</span>
+                    </div>
+                    <pre class="code-content"><span class="code-comment"># Create online store instance backed by Bigtable</span>
+gcloud vertex-ai feature-online-stores create user-online-store \
+    --region=us-central1 \
+    --bigtable-min-node-count=1 \
+    --bigtable-max-node-count=5
+
+<span class="code-comment"># Synchronize feature view with BigQuery source data</span>
+gcloud vertex-ai feature-views sync user-features \
+    --feature-online-store=user-online-store \
+    --region=us-central1</pre>
+                </div>
+                <div class="example-box">
+                    <strong>CI/CD GitOps Example</strong>
+                    MLOps engineers run these gcloud scripts inside Cloud Build templates to automatically create and update feature registries when new schemas are merged into main branches.
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10: INTEGRATION WITH MODEL MONITORING -->
+        <section class="slide">
+            <span class="slide-category">MLOps Monitoring</span>
+            <h2 class="slide-title">Model Monitoring Integration</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Continuous Skew Checks:</strong> Automated alerts if serving feature distributions drift from baseline training datasets (TFRecord profiles).</li>
+                        <li><strong>PSI Metric:</strong> Model Monitoring calculates Population Stability Index. If PSI exceeds 0.20, alerts notify engineering teams.</li>
+                        <li><strong>Automated Retraining:</strong> Integration with Pub/Sub allows alerting systems to launch retraining DAGs automatically.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Monitoring Drift Example</strong>
+                        Monitoring user age distributions. Baseline training mean was 24. Shifted average in serving hits 42 (PSI = 0.28). System alerts trigger an automated retraining pipeline.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>MLOps Operations Loop</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Unifying features within the Feature Store ensures the baseline reference schemas remain identical, eliminating manual calculations during drift checks.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: IAM & SECURITY GOVERNANCE -->
+        <section class="slide">
+            <span class="slide-category">Security & Governance</span>
+            <h2 class="slide-title">IAM Permissions & Access Controls</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>roles/aiplatform.admin:</strong> Grants full control over Feature Store creation, schema modification, and resource deletions.</li>
+                        <li><strong>roles/aiplatform.user:</strong> Allows listing, searching, reading, and exporting feature values. Default role for ML engineers and clients.</li>
+                        <li><strong>VPC Service Controls:</strong> Lock Feature Store endpoints inside a private security boundary, protecting datasets from exfiltration.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Deployment Example</strong>
+                        The online prediction container's service account is granted the <code>aiplatform.user</code> role, enabling it to query features on port 8080 while blocking write configurations.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Security Rule</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Service accounts attached to prediction serving containers must possess the <code>aiplatform.user</code> role to successfully pull online features on port 8080.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: ARCHITECT'S SUMMARY -->
+        <section class="slide">
+            <span class="slide-category">Takeaways</span>
+            <h2 class="slide-title">Architect's Checklist</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Train-Serve Skew:</strong> Eliminate skew by serving and training from the same Feature Store views.</li>
+                        <li><strong>Data Leakage:</strong> Eliminate leakage by deploying point-in-time snapshot joins.</li>
+                        <li><strong>Online Store:</strong> Backed by Bigtable for sub-15ms latencies.</li>
+                        <li><strong>Offline Store:</strong> Integrates with BigQuery for large analytical dataset creation.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Architect's Advice</strong>
+                        On the exam, if they request sub-10ms serving, historical data timelines, or data quality assurances for tabular features, Vertex AI Feature Store is the correct answer.
+                    </div>
+                </div>
+                <div class="glass-card" style="border-color: rgba(56, 239, 125, 0.3);">
+                    <div class="card-title" style="color: var(--accent-green);">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Exam Tip</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        If a scenario requires real-time serving latency, user sharing, or data leakage protection, **Vertex AI Feature Store** is always the correct GCP ML solution architecture.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Presentation Navigation overlay controls -->
+        <div class="controls-overlay">
+            <button id="prev-btn" class="control-btn" title="Previous Slide (Left Arrow)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button id="next-btn" class="control-btn" title="Next Slide (Right Arrow)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <!-- Footer Page counter -->
+        <footer class="presentation-footer">
+            <span>Vertex AI Feature Store Presentation</span>
+            <span id="page-num" class="slide-counter">Slide 1 of 12</span>
+            <span>Google Cloud ML Engineer Cert</span>
+        </footer>
+    </div>
+
+    <!-- Script navigations -->
+    <script src="app.js"></script>
+</body>
+</html>
