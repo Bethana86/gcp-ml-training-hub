@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP MLOps: Introduction to Generative AI Presentation</title>
+    <!-- CSS slide styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Progress Bar Indicator -->
+        <div class="progress-bar-container">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+
+        <!-- SLIDE 1: TITLE SLIDE -->
+        <section class="slide title-slide active">
+            <span class="slide-category">Google Cloud GenAI</span>
+            <h1 class="slide-title">Introduction to <span>Generative AI</span></h1>
+            <p class="slide-subtitle">Core Concepts, Transformer Architectures, LLM Pre-training, and Enterprise Prompt Engineering</p>
+            <div class="title-footer">
+                <span>Presenter: <strong>Bethanasamy Rajamani</strong></span>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: CORE CHALLENGES IN GENAI APPLICATIONS -->
+        <section class="slide">
+            <span class="slide-category">The Problem</span>
+            <h2 class="slide-title">Core Challenges in GenAI Applications</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Hallucination Risks:</strong> Models generate fluent but factually incorrect statements due to statistical next-token optimization.</li>
+                        <li><strong>Context Window Limits:</strong> Transformers can process only a limited number of tokens in memory, leading to retrieval failures on massive corpora.</li>
+                        <li><strong>High Inference Costs:</strong> Auto-regressive decoding is memory-bound, demanding persistent high-tier GPU/TPU resources.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Real-World Example (Hallucination & Costs)</strong>
+                        A customer support chatbot attempts to quote insurance terms. Without grounding, it fabricates a refund policy (hallucination). At 10,000 queries per minute, standard API serving costs scale exponentially (high inference costs).
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Why Standard NLP Falls Short</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;">
+                        Traditional rule-based and classification NLP models (such as BERT or simple LSTM classifiers) are excellent for sentiment scoring or named entity extraction. However, they lack the semantic reasoning, zero-shot generalization, and synthesis capabilities required to build interactive reasoning agents.
+                    </p>
+                    <p style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 500;">
+                        Example: Writing custom classification rules for 50 different document layouts is inefficient compared to prompting a foundation model to extract structured JSON.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: WHAT IS GENERATIVE AI? -->
+        <section class="slide">
+            <span class="slide-category">Architectural Overview</span>
+            <h2 class="slide-title">What is Generative AI?</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="margin-bottom: 20px; font-weight: 500; color: var(--text-primary);">A category of artificial intelligence that creates new content, utilizing massive pre-trained transformer weights.</p>
+                    <ul>
+                        <li><strong>Centralized Foundation Models:</strong> Trained on internet-scale datasets, forming baseline reasoning capabilities.</li>
+                        <li><strong>Multimodality:</strong> Natively processes and connects diverse modalities including text, images, video, and audio code.</li>
+                        <li><strong>Transfer Learning:</strong> Repurposes general knowledge to specific downstream tasks via fine-tuning or in-context prompting.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Operational Example</strong>
+                        A business analyst inputs natural language questions. The model generates both the SQL query and an explanatory summary, translating unstructured language into structured system database queries.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Operational Benefits</span>
+                    </div>
+                    <div class="benefits-list" style="display: flex; flex-direction: column; gap: 16px; margin-top: 15px;">
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-bolt" style="color: var(--accent-blue);"></i>
+                                <span>Zero-Shot Reasoning Capabilities</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Solves new, unseen tasks simply by receiving descriptive prompts without requiring model gradient updates or parameter fine-tuning.
+                            </p>
+                        </div>
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-clone" style="color: var(--accent-green);"></i>
+                                <span>API Scalability & Managed Access</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Deploy models serverless via the Gemini API, eliminating custom hardware hosting, scaling, and load-balancer operations.
+                            </p>
+                        </div>
+                        <div class="benefit-item">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
+                                <i class="fa-solid fa-route" style="color: var(--accent-pink);"></i>
+                                <span>Rapid Application Deployment Loops</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-left: 22px; margin-top: 4px;">
+                                Decouples model engineering from software features. Application logic adjusts by updating system prompts rather than retraining pipelines.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: TRANSFORMER ARCHITECTURE HIERARCHY -->
+        <section class="slide">
+            <span class="slide-category">Model Architecture</span>
+            <h2 class="slide-title">Transformer Architecture Hierarchy</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Self-Attention Layer:</strong> Calculates dynamic mathematical weights representing how tokens relate within a context window.</li>
+                        <li><strong>Encoder-Decoder Blocks:</strong> Encodes input text into vector spaces, and decodes vectors to target sequences (ideal for translation).</li>
+                        <li><strong>Decoder-Only Autoregressive:</strong> Generates next tokens sequentially based on past contexts (backbone of modern Gemini/LLMs).</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Architecture Mapping Example</strong>
+                        Input Tokens = <code>["Generative", "AI", "is"]</code>. Self-attention maps that <code>"AI"</code> strongly relates to <code>"Generative"</code>, predicting the next probable token <code>"transformational"</code>.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-circle-nodes"></i>
+                        <span>Key Design Pattern</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Raw inputs are tokenized and mapped to continuous vector Embeddings. Positional Encodings are added to maintain sequence order. Multi-head attention blocks then capture relationships in parallel, outputting normalized token probabilities.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: PRE-TRAINING & FINE-TUNING PIPELINES -->
+        <section class="slide">
+            <span class="slide-category">Ingestion Pipelines</span>
+            <h2 class="slide-title">Pre-training & Fine-Tuning Pipelines</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Unsupervised Pre-training:</strong> Large-scale model training on raw text corpus to predict next words, building baseline semantics.</li>
+                        <li><strong>Supervised Fine-Tuning (SFT):</strong> Trains the base model on high-quality instruction-response pairs to learn task compliance.</li>
+                        <li><strong>RLHF Alignment:</strong> Integrates Reinforcement Learning from Human Feedback to align outputs with safety and preferences.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Pipeline Example</strong>
+                        Raw internet scrap builds a Base Model. Supervised training on 50,000 chat logs creates an SFT Model. Reward optimization aligned with human reviewers produces a final chat-ready LLM.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Active Model Training & Alignment Flow</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Connection Paths -->
+                        <path id="path-raw-base" class="flow-path active-pink" d="M 60,110 L 150,110" />
+                        <path id="path-base-sft" class="flow-path active-green" d="M 150,110 L 240,110" />
+                        <path id="path-sft-rlhf" class="flow-path active-blue" d="M 240,110 L 330,110" />
+                        
+                        <!-- Flow dots -->
+                        <circle r="4" fill="var(--accent-pink)">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M 60,110 L 150,110" begin="0s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-green)">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M 150,110 L 240,110" begin="1s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-blue)">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M 240,110 L 330,110" begin="2s" />
+                        </circle>
+
+                        <!-- Node: Raw Text -->
+                        <g transform="translate(10, 85)">
+                            <rect x="0" y="0" width="50" height="50" rx="8" class="node-circle" />
+                            <text x="25" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Raw Text</text>
+                            <text x="25" y="34" fill="var(--text-muted)" font-size="7" text-anchor="middle">(Unlabeled)</text>
+                        </g>
+                        
+                        <!-- Node: Base Model -->
+                        <g transform="translate(125, 85)">
+                            <rect x="0" y="0" width="50" height="50" rx="8" class="node-circle" />
+                            <text x="25" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Base Model</text>
+                            <text x="25" y="34" fill="var(--accent-pink)" font-size="7" text-anchor="middle" font-weight="500">(Weights)</text>
+                        </g>
+                        
+                        <!-- Node: SFT Model -->
+                        <g transform="translate(215, 85)">
+                            <rect x="0" y="0" width="55" height="50" rx="8" class="node-circle" />
+                            <text x="27.5" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">SFT Model</text>
+                            <text x="27.5" y="34" fill="var(--accent-green)" font-size="7" text-anchor="middle" font-weight="500">(Tuned)</text>
+                        </g>
+                        
+                        <!-- Node: RLHF Model -->
+                        <g transform="translate(310, 85)">
+                            <rect x="0" y="0" width="60" height="50" rx="8" class="node-circle pulse" />
+                            <text x="30" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">RLHF Model</text>
+                            <text x="30" y="34" fill="var(--accent-blue)" font-size="7" text-anchor="middle" font-weight="500">(Aligned)</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: LLM INFERENCE MECHANICS -->
+        <section class="slide">
+            <span class="slide-category">Serving (Low Latency)</span>
+            <h2 class="slide-title">LLM Inference Mechanics</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Tokenization & Embeddings:</strong> Input text is broken down into unique numerical token IDs, mapped to semantic vector spaces.</li>
+                        <li><strong>KV Caching:</strong> Stores key-value attention representations of past tokens, skipping redundant matrix calculations during generation loops.</li>
+                        <li><strong>Decoding Parameters:</strong> Parameters like Temperature and Top-K/Top-P shape output selection, controlling creativity vs consistency.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>gRPC serving Example</strong>
+                        An API endpoint receives a prompt. It tokenizes inputs, processes them through transformer layers in 24ms (Time-To-First-Token), and streams generated tokens sequentially over HTTP/2.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Online Token generation & KV Loop</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Request Path -->
+                        <path class="flow-path active-green" d="M 70,95 L 230,95" />
+                        <!-- Response Path -->
+                        <path class="flow-path active-blue" d="M 230,125 L 70,125" style="stroke: var(--accent-blue); stroke-dasharray: 6,6; animation: strokeSlide 1s linear infinite;" />
+
+                        <!-- Request Dot -->
+                        <circle r="5" fill="var(--accent-green)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 70,95 L 230,95" begin="0s" />
+                        </circle>
+                        <!-- Response Dot -->
+                        <circle r="5" fill="var(--accent-blue)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 230,125 L 70,125" begin="1.2s" />
+                        </circle>
+
+                        <!-- Node: Client model -->
+                        <g transform="translate(10, 90)">
+                            <circle cx="20" cy="20" r="25" class="node-circle" />
+                            <text x="20" y="23" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Model API</text>
+                        </g>
+
+                        <!-- Node: LLM Service -->
+                        <g transform="translate(250, 90)">
+                            <circle cx="20" cy="20" r="25" class="node-circle pulse-green" />
+                            <text x="20" y="23" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">LLM Core</text>
+                        </g>
+
+                        <!-- Latency stopwatch counter -->
+                        <g transform="translate(125, 65)">
+                            <rect x="0" y="0" width="70" height="20" rx="4" fill="rgba(0,0,0,0.6)" stroke="var(--border-color)" />
+                            <text x="35" y="14" class="latency-text-field" text-anchor="middle">
+                                <tspan class="latency-timer-tick">24ms</tspan>
+                            </text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 7: RETRIEVAL-AUGMENTED GENERATION (RAG) & VECTOR SEARCH -->
+        <section class="slide">
+            <span class="slide-category">Serving (Analytical)</span>
+            <h2 class="slide-title">Retrieval-Augmented Generation (RAG)</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Document Chunking:</strong> Divides large enterprise manuals into overlapping semantic text snippets for indexing.</li>
+                        <li><strong>Vector Embeddings:</strong> Encodes document chunks into dense coordinate vectors using text embedding models.</li>
+                        <li><strong>Semantic Join:</strong> Searches vector spaces using cosine similarity to find document context segments matching user queries.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Semantic Search Example</strong>
+                        A user asks: "What is our Q3 cloud budget?" The system searches Vector Search, retrieves a table chunk from <code>q3_financials.pdf</code>, and injects it to ground the LLM's response.
+                    </div>
+                </div>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Query Vector Sweep & Semantic Match</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Horizontal Timeline Axis representing Embeddings Space -->
+                        <line x1="40" y1="130" x2="360" y2="130" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round" style="opacity: 0.3;" />
+                        
+                        <!-- Timeline Markers (Semantic documents) -->
+                        <circle class="marker-dot marker-dot-1" cx="100" cy="130" r="6" />
+                        <text x="100" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Doc Chunk A</text>
+                        
+                        <circle class="marker-dot marker-dot-2" cx="180" cy="130" r="6" />
+                        <text x="180" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Doc Chunk B</text>
+                        
+                        <circle class="marker-dot marker-dot-3" cx="260" cy="130" r="6" />
+                        <text x="260" y="115" fill="var(--text-secondary)" font-size="7" text-anchor="middle">Doc Chunk C</text>
+
+                        <!-- Vertical Sliding Timeline Line (Query vector sweeping space) -->
+                        <line class="timeline-slider-line" x1="40" y1="50" x2="40" y2="170" />
+                        <text x="150" y="195" fill="var(--accent-blue)" font-size="9" text-anchor="middle" font-weight="600">Query Vector Sweep (Cosine Lookup)</text>
+                        
+                        <!-- Leakage warning alert text -->
+                        <text x="260" y="150" class="leakage-warning-banner">[Semantic Context Injected]</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: GENERATIVE AI SDK (PYTHON) -->
+        <section class="slide">
+            <span class="slide-category">Developer Guide</span>
+            <h2 class="slide-title">Vertex AI Gemini API SDK (Python)</h2>
+            <div class="slide-body">
+                <p style="margin-bottom: 10px;">Interacting with Gemini models programmatically using the official google-genai library:</p>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>Python GenAI Client SDK</span>
+                    </div>
+                    <pre class="code-content"><span class="code-keyword">from</span> google <span class="code-keyword">import</span> genai
+<span class="code-keyword">from</span> google.genai <span class="code-keyword">import</span> types
+
+client = genai.Client()
+
+<span class="code-comment"># Generate grounded text using Gemini 1.5 Flash</span>
+response = client.models.generate_content(
+    model=<span class="code-string">"gemini-1.5-flash"</span>,
+    contents=<span class="code-string">"What is the self-attention mechanism in Transformers?"</span>,
+    config=types.GenerateContentConfig(
+        temperature=<span class="code-parameter">0.2</span>,
+        system_instruction=<span class="code-string">"You are an expert GCP ML Certification Instructor."</span>
+    )
+)
+<span class="code-function">print</span>(response.text)</pre>
+                </div>
+                <div class="example-box">
+                    <strong>Endpoint Integration Example</strong>
+                    This code is used inside web services to call Gemini. Configuring low temperature (0.2) and clear system instructions guarantees focused, fact-grounded responses for API callers.
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 9: GOOGLE CLOUD CLI REFERENCE -->
+        <section class="slide">
+            <span class="slide-category">Operations Guide</span>
+            <h2 class="slide-title">Google Cloud CLI & Curl Reference</h2>
+            <div class="slide-body">
+                <p style="margin-bottom: 10px;">Interacting with Vertex AI model endpoints directly via command line and curl:</p>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>gcloud & curl raw calls</span>
+                    </div>
+                    <pre class="code-content"><span class="code-comment"># Call Gemini API via curl using gcloud authorization tokens</span>
+curl -X POST \
+  -H <span class="code-string">"Authorization: Bearer $(gcloud auth print-access-token)"</span> \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/gemini-1.5-flash:generateContent \
+  -d '{
+    <span class="code-string">"contents"</span>: { <span class="code-string">"parts"</span>: { <span class="code-string">"text"</span>: <span class="code-string">"Explain transfer learning."</span> } },
+    <span class="code-string">"generationConfig"</span>: { <span class="code-string">"temperature"</span>: <span class="code-parameter">0.4</span> }
+  }'</pre>
+                </div>
+                <div class="example-box">
+                    <strong>DevOps Verification Example</strong>
+                    Sysadmins run these CLI checks inside deployment test files to verify that Google Cloud credentials and API routing policies are properly aligned before launching apps.
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10: INTEGRATION WITH MODEL MONITORING -->
+        <section class="slide">
+            <span class="slide-category">MLOps Monitoring</span>
+            <h2 class="slide-title">LLM Safety & Monitoring Integration</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Content Moderation Filters:</strong> Built-in safety hooks that evaluate model queries and responses for harassment, hate speech, and explicit blocks.</li>
+                        <li><strong>Semantic Drift Checks:</strong> Monitoring client prompt query patterns over time to capture task drift or adversarial injection patterns.</li>
+                        <li><strong>Guardrails Integration:</strong> Wrapping model routes with external middleware to filter toxic language prior to client presentation.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Safety Blocks Example</strong>
+                        An input prompt contains toxic patterns. The Vertex AI safety layer intercepts the request, blocks execution, and returns a structured response indicating a blocked classification.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>MLOps Operations Loop</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Deploying models in production requires active validation loops. Integrating safety checks in the prediction pipeline prevents reputation risks, toxic outputs, and jailbreak exploits.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: IAM & SECURITY GOVERNANCE -->
+        <section class="slide">
+            <span class="slide-category">Security & Governance</span>
+            <h2 class="slide-title">IAM Permissions & Security Governance</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>roles/aiplatform.user:</strong> Allows invoking foundation models, running predictions, and running prompt lookups.</li>
+                        <li><strong>roles/aiplatform.admin:</strong> Allows full access to import datasets, deploy custom endpoints, and delete models.</li>
+                        <li><strong>VPC Service Controls:</strong> Wraps Gemini calls in virtual security networks, blocking data extraction to external networks.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Deployment Example</strong>
+                        The frontend service account is granted the <code>aiplatform.user</code> role, enabling it to call Gemini predictions while blocking structural configuration edits.
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Security Rule</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Service accounts attached to web servers must be restricted to <code>roles/aiplatform.user</code> to adhere to the principle of least privilege, preventing model registry access.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: ARCHITECT'S SUMMARY -->
+        <section class="slide">
+            <span class="slide-category">Takeaways</span>
+            <h2 class="slide-title">Architect's Checklist</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Zero-Shot/Few-Shot:</strong> First attempt prompting configurations before investing in custom parameter tuning.</li>
+                        <li><strong>Retrieval-Augmented Gen:</strong> Ground models using Vector Search to mitigate hallucinations and present fresh datasets.</li>
+                        <li><strong>Cost/Latency:</strong> Select Gemini Flash for quick, budget serving. Reserve Pro for complex reasoning.</li>
+                        <li><strong>Governance:</strong> Enforce IAM role boundaries and safety filter limits at the endpoint level.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Architect's Advice</strong>
+                        On the exam, if a scenario asks to connect private enterprise PDF documents with LLM outputs without model retraining, the answer is always **RAG with Vector Search**.
+                    </div>
+                </div>
+                <div class="glass-card" style="border-color: rgba(56, 239, 125, 0.3);">
+                    <div class="card-title" style="color: var(--accent-green);">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Exam Tip</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        If the exam asks to adapt a model to proprietary, frequently changing documentation under tight budgets, **Retrieval-Augmented Generation (RAG)** is the correct choice over custom fine-tuning.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Presentation Navigation overlay controls -->
+        <div class="controls-overlay">
+            <button id="prev-btn" class="control-btn" title="Previous Slide (Left Arrow)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button id="next-btn" class="control-btn" title="Next Slide (Right Arrow)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <!-- Footer Page counter -->
+        <footer class="presentation-footer">
+            <span>Introduction to Generative AI Presentation</span>
+            <span id="page-num" class="slide-counter">Slide 1 of 12</span>
+            <span>Google Cloud ML Engineer Cert</span>
+        </footer>
+    </div>
+
+    <!-- Script navigations -->
+    <script src="app.js"></script>
+</body>
+</html>

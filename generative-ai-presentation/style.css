@@ -1,0 +1,518 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+    --bg-dark: #e4e4e7;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --text-primary: #18181b;
+    --text-secondary: #3f3f46;
+    --text-muted: #71717a;
+    
+    --primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    --secondary-gradient: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+    --glow-blue: 0 4px 12px rgba(29, 78, 216, 0.15);
+    
+    --accent-blue: #1d4ed8;
+    --accent-green: #047857;
+    --accent-pink: #be185d;
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(29, 78, 216, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(109, 40, 217, 0.05) 0%, transparent 45%);
+}
+
+/* Presentation Container */
+.presentation-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Slide Deck */
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 6% 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(100px);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+    z-index: 2;
+}
+
+.slide.prev-slide {
+    opacity: 0;
+    transform: translateX(-100px);
+}
+
+/* Slide Elements */
+.slide-category {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.slide-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+.slide-title span {
+    color: var(--accent-blue);
+}
+
+.slide-body {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 950px;
+}
+
+/* Bullet list overrides */
+.slide-body ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.slide-body li {
+    position: relative;
+    padding-left: 28px;
+}
+
+.slide-body li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: 800;
+}
+
+.slide-body strong {
+    color: var(--text-primary);
+}
+
+/* Example Box Style */
+.example-box {
+    background: rgba(255, 255, 255, 0.4);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.example-box strong {
+    color: var(--accent-blue);
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* Title Slide Specifics */
+.title-slide {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.title-slide .slide-title {
+    font-size: 4.2rem;
+    max-width: 1100px;
+    margin: 20px auto 30px;
+}
+
+.title-slide .slide-subtitle {
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+.title-footer {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    padding-top: 24px;
+    width: 60%;
+}
+
+.title-footer span strong {
+    color: var(--text-secondary);
+}
+
+/* Split content grid */
+.split-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Glass Card */
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-title i {
+    color: var(--accent-blue);
+}
+
+/* Code Highlights */
+.code-wrapper {
+    background: #f4f4f5;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-top: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    width: 100%;
+}
+
+.code-header {
+    background: rgba(0, 0, 0, 0.03);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.code-content {
+    padding: 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    line-height: 1.5;
+    color: #18181b;
+}
+
+.code-keyword { color: #be185d; }
+.code-string { color: #047857; }
+.code-comment { color: #71717a; font-style: italic; }
+.code-function { color: #1d4ed8; }
+.code-parameter { color: #18181b; }
+
+/* Ingestion Diagram styles */
+.diagram-box {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+}
+
+.diagram-svg {
+    width: 100%;
+    max-width: 460px;
+    height: 230px;
+}
+
+/* --- SVG ANIMATIONS CSS --- */
+
+/* Node pulse */
+.node-circle {
+    fill: #ffffff;
+    stroke: var(--accent-blue);
+    stroke-width: 2;
+    transition: var(--transition-smooth);
+}
+
+.node-circle.pulse {
+    animation: nodePulseGlow 2s infinite alternate;
+}
+
+.node-circle.pulse-green {
+    stroke: var(--accent-green);
+    animation: nodePulseGlowGreen 2s infinite alternate;
+}
+
+.flow-path {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.08);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.flow-path.active {
+    stroke: var(--accent-blue);
+    stroke-dasharray: 6, 6;
+    animation: strokeSlide 1s linear infinite;
+}
+
+.flow-path.active-green {
+    stroke: var(--accent-green);
+    stroke-dasharray: 6, 6;
+    animation: strokeSlide 1s linear infinite;
+}
+
+.flow-path.active-pink {
+    stroke: var(--accent-pink);
+    stroke-dasharray: 6, 6;
+    animation: strokeSlide 1s linear infinite;
+}
+
+/* Keyframes */
+@keyframes strokeSlide {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+@keyframes nodePulseGlow {
+    from {
+        filter: drop-shadow(0 0 2px rgba(29, 78, 216, 0.2));
+    }
+    to {
+        filter: drop-shadow(0 0 10px rgba(29, 78, 216, 0.5));
+    }
+}
+
+@keyframes nodePulseGlowGreen {
+    from {
+        filter: drop-shadow(0 0 2px rgba(4, 120, 87, 0.2));
+    }
+    to {
+        filter: drop-shadow(0 0 10px rgba(4, 120, 87, 0.5));
+    }
+}
+
+/* Serving Fetch Animation specifics */
+.latency-text-field {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    fill: var(--accent-green);
+    font-weight: 700;
+}
+
+.latency-timer-tick {
+    animation: latencyCount 3s steps(3) infinite;
+}
+
+@keyframes latencyCount {
+    0%, 100% { opacity: 0; }
+    15% { opacity: 1; }
+    50% { opacity: 1; }
+    85% { opacity: 0; }
+}
+
+/* Point-In-Time Timeline Animation */
+.timeline-slider-line {
+    stroke: var(--accent-blue);
+    stroke-width: 2;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(29, 78, 216, 0.4));
+    animation: sweepTimeline 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes sweepTimeline {
+    0%, 100% { transform: translateX(0px); }
+    50% { transform: translateX(240px); }
+}
+
+/* Timeline marker lights */
+.marker-dot {
+    transition: var(--transition-smooth);
+    animation: checkLeakage 6s infinite;
+}
+
+/* Dot 1 at X=100 */
+.marker-dot-1 {
+    animation-name: leakageDot1;
+}
+/* Dot 2 at X=180 */
+.marker-dot-2 {
+    animation-name: leakageDot2;
+}
+/* Dot 3 (Future) at X=260 */
+.marker-dot-3 {
+    animation-name: leakageDot3;
+}
+
+@keyframes leakageDot1 {
+    0%, 100% { fill: var(--accent-green); stroke: var(--accent-green); filter: drop-shadow(0 0 4px rgba(4, 120, 87, 0.4)); }
+    10% { fill: var(--accent-green); }
+    50% { fill: var(--accent-green); }
+    90% { fill: var(--accent-green); }
+}
+
+@keyframes leakageDot2 {
+    0%, 100% { fill: var(--text-muted); stroke: var(--text-muted); filter: none; }
+    28% { fill: var(--text-muted); filter: none; }
+    32% { fill: var(--accent-green); stroke: var(--accent-green); filter: drop-shadow(0 0 4px rgba(4, 120, 87, 0.4)); }
+    50% { fill: var(--accent-green); }
+    68% { fill: var(--accent-green); }
+    72% { fill: var(--text-muted); filter: none; }
+}
+
+@keyframes leakageDot3 {
+    0%, 100% { fill: var(--text-muted); stroke: var(--text-muted); filter: none; }
+    44% { fill: var(--text-muted); filter: none; }
+    48% { fill: var(--accent-green); stroke: var(--accent-green); filter: drop-shadow(0 0 4px rgba(4, 120, 87, 0.4)); }
+    50% { fill: var(--accent-green); }
+    52% { fill: var(--accent-green); }
+    56% { fill: var(--text-muted); filter: none; }
+}
+
+/* Leakage Warning box */
+.leakage-warning-banner {
+    font-family: 'Outfit', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    text-anchor: middle;
+    animation: warningText 6s infinite;
+}
+
+@keyframes warningText {
+    0%, 28%, 72%, 100% { fill: var(--text-muted); opacity: 0.3; }
+    30%, 70% { fill: var(--accent-pink); opacity: 1; }
+}
+
+/* --- Slide progression bars --- */
+.progress-bar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    z-index: 10;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary-gradient);
+    box-shadow: var(--glow-blue);
+    transition: width 0.3s ease-out;
+}
+
+/* Footer elements */
+.presentation-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 10%;
+    right: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    z-index: 10;
+    pointer-events: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 15px;
+}
+
+/* Controls overlay */
+.controls-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 5%;
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+}
+
+.control-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.control-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+.control-btn:focus {
+    outline: none;
+}

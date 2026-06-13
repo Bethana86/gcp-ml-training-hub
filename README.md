@@ -37,6 +37,12 @@ The presentation is fully compiled using a premium **Light-Grey (Zinc/Platinum)*
 │   ├── app.js                           # Slide navigation controller
 │   ├── generate_pptx.py                 # python-pptx Slide Compiler Script
 │   └── Vertex_AI_Feature_Store.pptx     # Compiled Widescreen PowerPoint Deck
+├── generative-ai-presentation/
+│   ├── index.html                       # Standalone Generative AI Web slides
+│   ├── style.css                        # Slide specific light-grey styles
+│   ├── app.js                           # Slide navigation controller
+│   ├── generate_pptx.py                 # python-pptx Slide Compiler Script
+│   └── Introduction_to_Generative_AI.pptx # Compiled Widescreen PowerPoint Deck
 └── .gitignore                           # Excludes logs and python cache files
 ```
 
@@ -45,24 +51,28 @@ The presentation is fully compiled using a premium **Light-Grey (Zinc/Platinum)*
 ## 🛠️ How to Run Locally
 
 ### 1. View the Interactive Web Slides
-Start a local web server in the root of this project and navigate to the slide deck:
+Start a local web server in the root of this project and navigate to either slide deck:
 ```bash
 # Using Python
 python -m http.server 8089
 ```
 Then open your browser and navigate to:
-👉 [http://localhost:8089/featurestore-presentation/](http://localhost:8089/featurestore-presentation/)
+* Vertex AI Feature Store Presentation: 👉 [http://localhost:8089/featurestore-presentation/](http://localhost:8089/featurestore-presentation/)
+* Introduction to Generative AI Presentation: 👉 [http://localhost:8089/generative-ai-presentation/](http://localhost:8089/generative-ai-presentation/)
 
-### 2. Generate/Recompile the PowerPoint Slide Deck
-To modify slide contents or colors and re-compile the PowerPoint file, ensure you have Python and `python-pptx` installed:
+### 2. Generate/Recompile the PowerPoint Slide Decks
+To modify slide contents or colors and re-compile either PowerPoint file, ensure you have Python and `python-pptx` installed:
 ```bash
 # Install requirements
 pip install python-pptx
 
-# Run compiler
+# Run compiler for Feature Store
 python featurestore-presentation/generate_pptx.py
+
+# Run compiler for Generative AI
+python generative-ai-presentation/generate_pptx.py
 ```
-This will compile and overwrite `Vertex_AI_Feature_Store.pptx` in the same directory.
+This will compile and write/overwrite the `.pptx` file in their respective directories.
 
 ---
 
