@@ -256,6 +256,51 @@ def add_code_block(slide, left, top, width, height, code_str, is_bash=False):
         else:
             parse_code_line(p, line, keywords)
 
+def add_qa_slide(category, title, question_text, options, correct_letter, explanation, ref_link):
+    slide = prs.slides.add_slide(blank_layout)
+    set_slide_background(slide)
+    add_slide_header(slide, category, title)
+    
+    # Add Question Text and Options on the left
+    tb_q = slide.shapes.add_textbox(Inches(0.8), Inches(1.5), Inches(6.8), Inches(5.2))
+    tf_q = tb_q.text_frame
+    tf_q.word_wrap = True
+    tf_q.margin_left = tf_q.margin_right = tf_q.margin_top = tf_q.margin_bottom = Inches(0)
+    
+    p_q = tf_q.paragraphs[0]
+    p_q.text = question_text
+    p_q.space_after = Pt(14)
+    format_run(p_q.runs[0], font_name="Segoe UI", font_size=Pt(12), color=COLOR_TEXT_PRIMARY, bold=True)
+    
+    for opt_letter, opt_text in options:
+        p_opt = tf_q.add_paragraph()
+        p_opt.space_after = Pt(8)
+        
+        run_let = p_opt.add_run()
+        run_let.text = f"{opt_letter}.  "
+        format_run(run_let, font_name="Segoe UI", font_size=Pt(11), color=COLOR_ACCENT_BLUE, bold=True)
+        
+        run_txt = p_opt.add_run()
+        run_txt.text = opt_text
+        format_run(run_txt, font_name="Segoe UI", font_size=Pt(11), color=COLOR_TEXT_SECONDARY)
+        
+    # Add Answer Card on the right
+    tf_card = add_card_box(slide, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Validation Panel")
+    
+    p_ans = tf_card.add_paragraph()
+    p_ans.text = f"Correct Answer: {correct_letter}"
+    p_ans.space_after = Pt(10)
+    format_run(p_ans.runs[0], font_name="Segoe UI", font_size=Pt(14), color=COLOR_ACCENT_GREEN, bold=True)
+    
+    p_exp = tf_card.add_paragraph()
+    p_exp.text = f"Explanation: {explanation}"
+    p_exp.space_after = Pt(14)
+    format_run(p_exp.runs[0], font_name="Segoe UI", font_size=Pt(11), color=COLOR_TEXT_SECONDARY)
+    
+    p_ref = tf_card.add_paragraph()
+    p_ref.text = f"GCP Reference: {ref_link}"
+    format_run(p_ref.runs[0], font_name="Segoe UI", font_size=Pt(9.5), color=COLOR_TEXT_MUTED, italic=True)
+
 
 # ==================== SLIDE 1: TITLE SLIDE ====================
 slide1 = prs.slides.add_slide(blank_layout)
@@ -682,6 +727,167 @@ p_desc12 = tf_card12.add_paragraph()
 p_desc12.text = "If a scenario requires real-time serving latency, user sharing, or data leakage protection, **Vertex AI Feature Store** is always the correct GCP ML solution architecture."
 format_run(p_desc12.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
 
+
+
+# ==================== SLIDE 13: PRACTICE SCENARIO 1 ====================
+add_qa_slide(
+    category="Practice Scenario 1 of 10",
+    title="Minimizing Online Serving Latency",
+    question_text="A financial company is deploying an online transaction fraud detection model on Vertex AI. The model needs to retrieve customer feature values (e.g., transaction frequency in the last 10 minutes) with sub-10ms latency during prediction queries. How should the architecture be designed using Vertex AI Feature Store?",
+    options=[
+        ("A", "Configure offline serving batch exports to sync historical data to Cloud Storage and serve them directly from custom GKE nodes."),
+        ("B", "Set up a Feature Group pointing to BigQuery, register Feature Views, and enable Online Serving using Bigtable as the online store database."),
+        ("C", "Query BigQuery ML models directly using standard SQL procedures from GCF functions."),
+        ("D", "Use Memorystore for Redis manually and write Spark Streaming ETL scripts to populate user features from GCS.")
+    ],
+    correct_letter="B",
+    explanation="Under the latest BigQuery-centric Feature Store architecture, developers create a Feature Group mapping BigQuery views, then create a Feature View and provision an online store database instance (backed by optimized Cloud Bigtable or Redis) for sub-10ms gRPC read requests.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/latest/read-feature-values"
+)
+
+# ==================== SLIDE 14: PRACTICE SCENARIO 2 ====================
+add_qa_slide(
+    category="Practice Scenario 2 of 10",
+    title="Data Leakage Prevention",
+    question_text="An ML engineer is building a pipeline to retrain a customer recommendation model. The training dataset combines user profile features from a feature store with historical purchase event logs. How can the engineer prevent data leakage during training set generation?",
+    options=[
+        ("A", "Perform standard SQL inner joins in BigQuery without specifying event times, relying on manual date filters."),
+        ("B", "Read the latest active feature states from the online database at the time of running the training job."),
+        ("C", "Execute point-in-time joins using Feature Store offline serving, specifying the historical event timestamps to extract features as they existed at each event time."),
+        ("D", "Set up a daily batch cron job that overwrites all user profile values inside a single GCS export bucket.")
+    ],
+    correct_letter="C",
+    explanation="Point-in-time joins (or historical joins) are the standard solution to prevent data leakage during training data export. By joining features at the exact historical timestamp of the target label event, the system ensures that no 'future data' is fed into the model.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/legacy/explain-pit-join"
+)
+
+# ==================== SLIDE 15: PRACTICE SCENARIO 3 ====================
+add_qa_slide(
+    category="Practice Scenario 3 of 10",
+    title="Eliminating Train-Serve Skew",
+    question_text="A retail company runs a model to predict user conversion rates. The training features are preprocessed in batch using SQL in BigQuery, while the online serving application computes features using custom Python code. The model performs poorly in production due to train-serve skew. How can Vertex AI Feature Store resolve this?",
+    options=[
+        ("A", "Define the preprocessing transformations in BigQuery views, register them as a Feature Group, and serve both training and prediction requests from the same Feature Store views."),
+        ("B", "Standardize all preprocessing by rewriting the transformations directly inside the GKE API container."),
+        ("C", "Deploy a second BigQuery instance dedicated to serving online queries in real-time."),
+        ("D", "Use AutoML Tabular to automatically search for features during serving queries.")
+    ],
+    correct_letter="A",
+    explanation="To eliminate train-serve skew, both training pipelines (offline serving) and inference APIs (online serving) must fetch from a single source of feature definitions. Registering the preprocessing views in a centralized Feature Store accomplishes this.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview"
+)
+
+# ==================== SLIDE 16: PRACTICE SCENARIO 4 ====================
+add_qa_slide(
+    category="Practice Scenario 4 of 10",
+    title="Cost & Storage Optimization",
+    question_text="Multiple data science teams at an enterprise recalculate overlapping customer features (such as `monthly_average_spend`). This leads to redundant storage costs and processing fees. What is the best practice to optimize these costs?",
+    options=[
+        ("A", "Request the finance team to enforce resource quotas on all GCS buckets and limit active BigQuery projects."),
+        ("B", "Build a custom metadata registry using Cloud SQL to track who owns which Python scripting files."),
+        ("C", "Export all datasets to local development servers to avoid Google Cloud analytical query costs."),
+        ("D", "Standardize all user features in a centralized Vertex AI Feature Store, allowing teams to search, share, and reuse registered feature views.")
+    ],
+    correct_letter="D",
+    explanation="A primary goal of a feature store is code and resource sharing. Centralizing tabular features into Vertex AI Feature Store allows multiple teams to collaborate on a single registry, preventing duplicate ETL pipelines and saving cost.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview"
+)
+
+# ==================== SLIDE 17: PRACTICE SCENARIO 5 ====================
+add_qa_slide(
+    category="Practice Scenario 5 of 10",
+    title="Real-time Location Updates",
+    question_text="A ride-sharing application needs to update driver location features every few seconds and serve these features to an active matching model during booking requests. How should the streaming ingestion pipeline be structured?",
+    options=[
+        ("A", "Run a batch Dataflow job every hour to dump CSV features to Cloud Storage and import them to the Feature Store."),
+        ("B", "Ingest location events via Cloud Pub/Sub, process them in real-time with Cloud Dataflow, and write directly to the Feature Store online database using streaming writes."),
+        ("C", "Write location features directly from mobile client apps to a central BigQuery dataset using row inserts."),
+        ("D", "Set up Cloud Composer to trigger Python Cloud Functions that query BigQuery ML predictions.")
+    ],
+    correct_letter="B",
+    explanation="Real-time streaming ingestion uses the Pub/Sub -> Dataflow -> Feature Store (online database writes) pattern. This ensures that driver coordinate feature updates are written with sub-second lag and immediately readable by inference requests.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/legacy/ingest-streaming"
+)
+
+# ==================== SLIDE 18: PRACTICE SCENARIO 6 ====================
+add_qa_slide(
+    category="Practice Scenario 6 of 10",
+    title="Network Security & Governance",
+    question_text="A healthcare provider wants to deploy a disease risk prediction model using Vertex AI. The patient features are highly sensitive. The compliance team mandates that no data can traverse the public internet, and exfiltration must be blocked. How should the Feature Store be secured?",
+    options=[
+        ("A", "Rely on default HTTPS encryption and restrict Google Cloud project access to employees using MFA."),
+        ("B", "Store datasets in regional buckets and restrict permissions using Google Groups."),
+        ("C", "Place the Vertex AI Feature Store and online serving instances inside a VPC Service Controls (VPC-SC) security perimeter and query endpoints using private connections."),
+        ("D", "Encrypt all patient data using client-side libraries before uploading to a public BigQuery table.")
+    ],
+    correct_letter="C",
+    explanation="VPC Service Controls (VPC-SC) allows defining a network security perimeter around sensitive services, including Vertex AI Feature Store. It mitigates data exfiltration risk by blocking communications with resources outside the perimeter.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/general/vpc-sc"
+)
+
+# ==================== SLIDE 19: PRACTICE SCENARIO 7 ====================
+add_qa_slide(
+    category="Practice Scenario 7 of 10",
+    title="Least Privilege Access Control",
+    question_text="You are deploying an online prediction service on GKE that queries Vertex AI Feature Store to fetch user feature vectors during inference. To comply with security best practices, what IAM role should be assigned to the GKE service account?",
+    options=[
+        ("A", "roles/aiplatform.user"),
+        ("B", "roles/aiplatform.admin"),
+        ("C", "roles/owner"),
+        ("D", "roles/bigquery.dataEditor")
+    ],
+    correct_letter="A",
+    explanation="The `roles/aiplatform.user` role is the correct least privilege assignment for serving clients. It permits reading and listing feature store values, but does not allow administrative operations like editing groups or deleting stores.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/general/access-control"
+)
+
+# ==================== SLIDE 20: PRACTICE SCENARIO 8 ====================
+add_qa_slide(
+    category="Practice Scenario 8 of 10",
+    title="Model Monitoring & Feature Drift",
+    question_text="An ecommerce classification model uses features from Vertex AI Feature Store. Over time, the distribution of user purchase behavior shifts, causing prediction accuracy to drop. How can the team automate detection of this feature drift?",
+    options=[
+        ("A", "Run weekly statistical histograms manually inside local Jupyter notebooks to check variance."),
+        ("B", "Write a custom alert script that monitors memory usage on GKE prediction pods."),
+        ("C", "Re-train the model every 4 hours automatically to bypass checking if data drift exists."),
+        ("D", "Configure Vertex AI Model Monitoring on the deployed prediction endpoint, setting the training data as the baseline, and tracking feature drift metrics.")
+    ],
+    correct_letter="D",
+    explanation="Vertex AI Model Monitoring runs continuous statistical scans of prediction requests, comparing them to training baselines. If metrics like Population Stability Index (PSI) cross thresholds, it fires alerts to retrain.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/model-monitoring/overview"
+)
+
+# ==================== SLIDE 21: PRACTICE SCENARIO 9 ====================
+add_qa_slide(
+    category="Practice Scenario 9 of 10",
+    title="Upgrading Feature Store Architecture",
+    question_text="An ML team has been using the legacy Vertex AI Feature Store (which manages its own storage nodes and requires periodic manual syncs). They want to adopt the latest version of Vertex AI Feature Store to reduce operational costs and enable zero-copy sharing. What structural change should they make?",
+    options=[
+        ("A", "Rebuild the ETL scripts in Dataflow to export direct JSON profiles to Memorystore for Redis."),
+        ("B", "Migrate to the latest BigQuery-centric Feature Store and register existing BigQuery tables or logical views directly as Feature Groups."),
+        ("C", "Switch all machine learning features to local CSV files hosted on Compute Engine instances."),
+        ("D", "Re-deploy the legacy feature store nodes inside multiple different GCP zones.")
+    ],
+    correct_letter="B",
+    explanation="The latest version of Vertex AI Feature Store is built around BigQuery as a single source of truth. It allows defining Feature Groups directly on BigQuery schemas, achieving zero-copy synchronization and lowering management cost.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview"
+)
+
+# ==================== SLIDE 22: PRACTICE SCENARIO 10 ====================
+add_qa_slide(
+    category="Practice Scenario 10 of 10",
+    title="Handling Missing Features",
+    question_text="During online serving, a prediction request arrives for a newly registered user who does not yet have calculated feature values in the Feature Store. The model requires valid numerical inputs. How should the pipeline handle this?",
+    options=[
+        ("A", "Configure the GKE serving application to catch empty/NULL responses from the Feature Store and impute them using pre-calculated median or mean statistics."),
+        ("B", "Allow the model prediction to fail and return an HTTP 500 error to the customer application."),
+        ("C", "Block user registrations until their feature extraction batch job finishes running at midnight."),
+        ("D", "Set the missing features to extremely high values (e.g. 99999) to bypass inputs verification.")
+    ],
+    correct_letter="A",
+    explanation="Cold-start users will lack history in the feature store registry, returning NULL. Imputing values in the serving API wrapper (using pre-aggregated median/mean values) prevents inference model crashes.",
+    ref_link="https://cloud.google.com/vertex-ai/docs/featurestore/latest/read-feature-values"
+)
 
 # Save PowerPoint deck
 output_path = "Vertex_AI_Feature_Store.pptx"

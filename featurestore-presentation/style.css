@@ -517,3 +517,94 @@ body {
 .control-btn:focus {
     outline: none;
 }
+
+/* Scenario Question slide styles */
+.question-options {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+.question-option {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: var(--transition-smooth);
+}
+.question-option span.option-letter {
+    font-weight: 700;
+    color: var(--accent-blue);
+}
+
+/* Details and Reveal button styling */
+details.answer-details {
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+details.answer-details[open] {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+details.answer-details summary {
+    list-style: none;
+    outline: none;
+    padding: 12px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+details.answer-details summary:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+details.answer-details[open] summary {
+    border-bottom: 1px solid var(--border-color);
+}
+details.answer-details summary::-webkit-details-marker {
+    display: none;
+}
+details.answer-details summary::after {
+    content: 'Reveal Answer & Explanation ▼';
+    font-size: 0.85rem;
+    color: white;
+    background: var(--primary-gradient);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    box-shadow: var(--glow-blue);
+    transition: var(--transition-smooth);
+}
+details.answer-details[open] summary::after {
+    content: 'Hide Explanation ▲';
+    background: var(--secondary-gradient);
+}
+.answer-content {
+    padding: 16px 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+.answer-content a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+.answer-content a:hover {
+    text-decoration: underline;
+}
+

@@ -462,6 +462,316 @@ gcloud vertex-ai feature-views sync user-features \
             </div>
         </section>
 
+        <!-- SLIDE 13: PRACTICE SCENARIO 1 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 1 of 10</span>
+            <h2 class="slide-title">Minimizing Online Serving Latency</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A financial company is deploying an online transaction fraud detection model on Vertex AI. The model needs to retrieve customer feature values (e.g., transaction frequency in the last 10 minutes) with sub-10ms latency during prediction queries. How should the architecture be designed using Vertex AI Feature Store?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Configure offline serving batch exports to sync historical data to Cloud Storage and serve them directly from custom GKE nodes.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Set up a Feature Group pointing to BigQuery, register Feature Views, and enable Online Serving using Bigtable as the online store database.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Query BigQuery ML models directly using standard SQL procedures from GCF functions.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Use Memorystore for Redis manually and write Spark Streaming ETL scripts to populate user features from GCS.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Under the latest BigQuery-centric Feature Store architecture, developers create a Feature Group mapping BigQuery views, then create a Feature View and provision an online store database instance (backed by optimized Cloud Bigtable or Redis) for sub-10ms gRPC read requests.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/latest/read-feature-values" target="_blank">Vertex AI Feature Store - Read Online Values</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 14: PRACTICE SCENARIO 2 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 2 of 10</span>
+            <h2 class="slide-title">Data Leakage Prevention</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">An ML engineer is building a pipeline to retrain a customer recommendation model. The training dataset combines user profile features from a feature store with historical purchase event logs. How can the engineer prevent data leakage during training set generation?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Perform standard SQL inner joins in BigQuery without specifying event times, relying on manual date filters.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Read the latest active feature states from the online database at the time of running the training job.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Execute point-in-time joins using Feature Store offline serving, specifying the historical event timestamps to extract features as they existed at each event time.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Set up a daily batch cron job that overwrites all user profile values inside a single GCS export bucket.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Point-in-time joins (or historical joins) are the standard solution to prevent data leakage during training data export. By joining features at the exact historical timestamp of the target label event, the system ensures that no "future data" is fed into the model.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/legacy/explain-pit-join" target="_blank">Vertex AI Feature Store - Explain PIT Joins</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 15: PRACTICE SCENARIO 3 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 3 of 10</span>
+            <h2 class="slide-title">Eliminating Train-Serve Skew</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A retail company runs a model to predict user conversion rates. The training features are preprocessed in batch using SQL in BigQuery, while the online serving application computes features using custom Python code. The model performs poorly in production due to train-serve skew. How can Vertex AI Feature Store resolve this?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Define the preprocessing transformations in BigQuery views, register them as a Feature Group, and serve both training and prediction requests from the same Feature Store views.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Standardize all preprocessing by rewriting the transformations directly inside the GKE API container.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Deploy a second BigQuery instance dedicated to serving online queries in real-time.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Use AutoML Tabular to automatically search for features during serving queries.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">A</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> To eliminate train-serve skew, both training pipelines (offline serving) and inference APIs (online serving) must fetch from a single source of feature definitions. Registering the preprocessing views in a centralized Feature Store accomplishes this.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview" target="_blank">Vertex AI Feature Store - Overview</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 16: PRACTICE SCENARIO 4 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 4 of 10</span>
+            <h2 class="slide-title">Cost & Storage Optimization</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">Multiple data science teams at an enterprise recalculate overlapping customer features (such as `monthly_average_spend`). This leads to redundant storage costs and processing fees. What is the best practice to optimize these costs?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Request the finance team to enforce resource quotas on all GCS buckets and limit active BigQuery projects.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Build a custom metadata registry using Cloud SQL to track who owns which Python scripting files.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Export all datasets to local development servers to avoid Google Cloud analytical query costs.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Standardize all user features in a centralized Vertex AI Feature Store, allowing teams to search, share, and reuse registered feature views.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">D</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> A primary goal of a feature store is code and resource sharing. Centralizing tabular features into Vertex AI Feature Store allows multiple teams to collaborate on a single registry, preventing duplicate ETL pipelines and saving cost.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview" target="_blank">Vertex AI Feature Store - Share & Discover</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 17: PRACTICE SCENARIO 5 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 5 of 10</span>
+            <h2 class="slide-title">Real-time Location Updates</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A ride-sharing application needs to update driver location features every few seconds and serve these features to an active matching model during booking requests. How should the streaming ingestion pipeline be structured?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Run a batch Dataflow job every hour to dump CSV features to Cloud Storage and import them to the Feature Store.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Ingest location events via Cloud Pub/Sub, process them in real-time with Cloud Dataflow, and write directly to the Feature Store online database using streaming writes.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Write location features directly from mobile client apps to a central BigQuery dataset using row inserts.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Set up Cloud Composer to trigger Python Cloud Functions that query BigQuery ML predictions.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Real-time streaming ingestion uses the Pub/Sub -> Dataflow -> Feature Store (online database writes) pattern. This ensures that driver coordinate feature updates are written with sub-second lag and immediately readable by inference requests.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/legacy/ingest-streaming" target="_blank">Vertex AI Feature Store - Streaming Ingest</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 18: PRACTICE SCENARIO 6 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 6 of 10</span>
+            <h2 class="slide-title">Network Security & Governance</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A healthcare provider wants to deploy a disease risk prediction model using Vertex AI. The patient features are highly sensitive. The compliance team mandates that no data can traverse the public internet, and exfiltration must be blocked. How should the Feature Store be secured?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Rely on default HTTPS encryption and restrict Google Cloud project access to employees using MFA.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Store datasets in regional buckets and restrict permissions using Google Groups.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Place the Vertex AI Feature Store and online serving instances inside a VPC Service Controls (VPC-SC) security perimeter and query endpoints using private connections.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Encrypt all patient data using client-side libraries before uploading to a public BigQuery table.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> VPC Service Controls (VPC-SC) allows defining a network security perimeter around sensitive services, including Vertex AI Feature Store. It mitigates data exfiltration risk by blocking communications with resources outside the perimeter.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/general/vpc-sc" target="_blank">Vertex AI - VPC Service Controls</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 19: PRACTICE SCENARIO 7 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 7 of 10</span>
+            <h2 class="slide-title">Least Privilege Access Control</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">You are deploying an online prediction service on GKE that queries Vertex AI Feature Store to fetch user feature vectors during inference. To comply with security best practices, what IAM role should be assigned to the GKE service account?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> roles/aiplatform.user</div>
+                        <div class="question-option"><span class="option-letter">B.</span> roles/aiplatform.admin</div>
+                        <div class="question-option"><span class="option-letter">C.</span> roles/owner</div>
+                        <div class="question-option"><span class="option-letter">D.</span> roles/bigquery.dataEditor</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">A</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> The `roles/aiplatform.user` role is the correct least privilege assignment for serving clients. It permits reading and listing feature store values, but does not allow administrative operations like editing groups or deleting stores.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/general/access-control" target="_blank">Vertex AI - Access Control & IAM</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 20: PRACTICE SCENARIO 8 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 8 of 10</span>
+            <h2 class="slide-title">Model Monitoring & Feature Drift</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">An ecommerce classification model uses features from Vertex AI Feature Store. Over time, the distribution of user purchase behavior shifts, causing prediction accuracy to drop. How can the team automate detection of this feature drift?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Run weekly statistical histograms manually inside local Jupyter notebooks to check variance.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Write a custom alert script that monitors memory usage on GKE prediction pods.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Re-train the model every 4 hours automatically to bypass checking if data drift exists.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Configure Vertex AI Model Monitoring on the deployed prediction endpoint, setting the training data as the baseline, and tracking feature drift metrics.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">D</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Vertex AI Model Monitoring runs continuous statistical scans of prediction requests, comparing them to training baselines. If metrics like Population Stability Index (PSI) cross thresholds, it fires alerts to retrain.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/model-monitoring/overview" target="_blank">Vertex AI - Model Monitoring Overview</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 21: PRACTICE SCENARIO 9 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 9 of 10</span>
+            <h2 class="slide-title">Upgrading Feature Store Architecture</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">An ML team has been using the legacy Vertex AI Feature Store (which manages its own storage nodes and requires periodic manual syncs). They want to adopt the latest version of Vertex AI Feature Store to reduce operational costs and enable zero-copy sharing. What structural change should they make?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Rebuild the ETL scripts in Dataflow to export direct JSON profiles to Memorystore for Redis.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Migrate to the latest BigQuery-centric Feature Store and register existing BigQuery tables or logical views directly as Feature Groups.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Switch all machine learning features to local CSV files hosted on Compute Engine instances.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Re-deploy the legacy feature store nodes inside multiple different GCP zones.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> The latest version of Vertex AI Feature Store is built around BigQuery as a single source of truth. It allows defining Feature Groups directly on BigQuery schemas, achieving zero-copy synchronization and lowering management cost.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/latest/overview" target="_blank">Vertex AI Feature Store - BigQuery Centric</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 22: PRACTICE SCENARIO 10 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 10 of 10</span>
+            <h2 class="slide-title">Handling Missing Features</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">During online serving, a prediction request arrives for a newly registered user who does not yet have calculated feature values in the Feature Store. The model requires valid numerical inputs. How should the pipeline handle this?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Configure the GKE serving application to catch empty/NULL responses from the Feature Store and impute them using pre-calculated median or mean statistics.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Allow the model prediction to fail and return an HTTP 500 error to the customer application.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Block user registrations until their feature extraction batch job finishes running at midnight.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Set the missing features to extremely high values (e.g. 99999) to bypass inputs verification.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">A</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Cold-start users will lack history in the feature store registry, returning NULL. Imputing values in the serving API wrapper (using pre-aggregated median/mean values) prevents inference model crashes.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/featurestore/latest/read-feature-values" target="_blank">Vertex AI Feature Store - Handling Null Reads</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
         <!-- Presentation Navigation overlay controls -->
         <div class="controls-overlay">
             <button id="prev-btn" class="control-btn" title="Previous Slide (Left Arrow)"><i class="fa-solid fa-chevron-left"></i></button>
