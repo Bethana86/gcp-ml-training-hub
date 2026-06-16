@@ -256,6 +256,51 @@ def add_code_block(slide, left, top, width, height, code_str, is_bash=False):
         else:
             parse_code_line(p, line, keywords)
 
+def add_qa_slide(category, title, question_text, options, correct_letter, explanation, ref_link):
+    slide = prs.slides.add_slide(blank_layout)
+    set_slide_background(slide)
+    add_slide_header(slide, category, title)
+    
+    # Add Question Text and Options on the left
+    tb_q = slide.shapes.add_textbox(Inches(0.8), Inches(1.5), Inches(6.8), Inches(5.2))
+    tf_q = tb_q.text_frame
+    tf_q.word_wrap = True
+    tf_q.margin_left = tf_q.margin_right = tf_q.margin_top = tf_q.margin_bottom = Inches(0)
+    
+    p_q = tf_q.paragraphs[0]
+    p_q.text = question_text
+    p_q.space_after = Pt(14)
+    format_run(p_q.runs[0], font_name="Segoe UI", font_size=Pt(12), color=COLOR_TEXT_PRIMARY, bold=True)
+    
+    for opt_letter, opt_text in options:
+        p_opt = tf_q.add_paragraph()
+        p_opt.space_after = Pt(8)
+        
+        run_let = p_opt.add_run()
+        run_let.text = f"{opt_letter}.  "
+        format_run(run_let, font_name="Segoe UI", font_size=Pt(11), color=COLOR_ACCENT_BLUE, bold=True)
+        
+        run_txt = p_opt.add_run()
+        run_txt.text = opt_text
+        format_run(run_txt, font_name="Segoe UI", font_size=Pt(11), color=COLOR_TEXT_SECONDARY)
+        
+    # Add Answer Card on the right
+    tf_card = add_card_box(slide, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Validation Panel")
+    
+    p_ans = tf_card.add_paragraph()
+    p_ans.text = f"Correct Answer: {correct_letter}"
+    p_ans.space_after = Pt(10)
+    format_run(p_ans.runs[0], font_name="Segoe UI", font_size=Pt(14), color=COLOR_ACCENT_GREEN, bold=True)
+    
+    p_exp = tf_card.add_paragraph()
+    p_exp.text = f"Explanation: {explanation}"
+    p_exp.space_after = Pt(14)
+    format_run(p_exp.runs[0], font_name="Segoe UI", font_size=Pt(11), color=COLOR_TEXT_SECONDARY)
+    
+    p_ref = tf_card.add_paragraph()
+    p_ref.text = f"GCP Reference: {ref_link}"
+    format_run(p_ref.runs[0], font_name="Segoe UI", font_size=Pt(9.5), color=COLOR_TEXT_MUTED, italic=True)
+
 
 # ==================== SLIDE 1: TITLE SLIDE ====================
 slide1 = prs.slides.add_slide(blank_layout)
@@ -573,124 +618,193 @@ lbl_warn.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
 format_run(tf_warn.paragraphs[0].runs[0], font_name="Segoe UI", font_size=Pt(10), color=COLOR_ACCENT_PINK, bold=True)
 
 
-# ==================== SLIDE 8: VERTEX AI GEMINI API SDK (PYTHON) ====================
+# ==================== SLIDE 8: LLM SAFETY & MONITORING INTEGRATION ====================
 slide8 = prs.slides.add_slide(blank_layout)
 set_slide_background(slide8)
-add_slide_header(slide8, "Developer Guide", "Vertex AI Gemini API SDK (Python)")
+add_slide_header(slide8, "MLOps Monitoring", "LLM Safety & Monitoring Integration")
 
-tb_desc8 = slide8.shapes.add_textbox(Inches(0.8), Inches(1.4), Inches(11.7), Inches(0.4))
-p_desc8 = tb_desc8.text_frame.paragraphs[0]
-p_desc8.text = "Interacting with Gemini models programmatically using the official google-genai library:"
-format_run(p_desc8.runs[0], font_name="Segoe UI", font_size=Pt(13), color=COLOR_TEXT_PRIMARY)
-
-code8 = """
-from google import genai
-from google.genai import types
-
-client = genai.Client()
-
-# Generate grounded text using Gemini 1.5 Flash
-response = client.models.generate_content(
-    model="gemini-1.5-flash",
-    contents="What is the self-attention mechanism in Transformers?",
-    config=types.GenerateContentConfig(
-        temperature=0.2,
-        system_instruction="You are an expert GCP ML Certification Instructor."
-    )
-)
-print(response.text)
-"""
-add_code_block(slide8, Inches(0.8), Inches(1.9), Inches(11.73), Inches(3.4), code8, is_bash=False)
-add_example_box(slide8, Inches(0.8), Inches(5.5), Inches(11.73), Inches(1.2), 
-    "This code is used inside web services to call Gemini. Configuring low temperature (0.2) and clear system instructions guarantees focused, fact-grounded responses for API callers.")
-
-
-# ==================== SLIDE 9: GOOGLE CLOUD CLI & CURL REFERENCE ====================
-slide9 = prs.slides.add_slide(blank_layout)
-set_slide_background(slide9)
-add_slide_header(slide9, "Operations Guide", "Google Cloud CLI & Curl Reference")
-
-tb_desc9 = slide9.shapes.add_textbox(Inches(0.8), Inches(1.4), Inches(11.7), Inches(0.4))
-p_desc9 = tb_desc9.text_frame.paragraphs[0]
-p_desc9.text = "Interacting with Vertex AI model endpoints directly via command line and curl:"
-format_run(p_desc9.runs[0], font_name="Segoe UI", font_size=Pt(13), color=COLOR_TEXT_PRIMARY)
-
-code9 = """
-# Call Gemini API via curl using gcloud authorization tokens
-curl -X POST \\
-  -H "Authorization: Bearer $(gcloud auth print-access-token)" \\
-  -H "Content-Type: application/json" \\
-  https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/gemini-1.5-flash:generateContent \\
-  -d '{
-    "contents": { "parts": { "text": "Explain transfer learning." } },
-    "generationConfig": { "temperature": 0.4 }
-  }'
-"""
-add_code_block(slide9, Inches(0.8), Inches(1.9), Inches(11.73), Inches(3.4), code9, is_bash=True)
-add_example_box(slide9, Inches(0.8), Inches(5.5), Inches(11.73), Inches(1.2), 
-    "Sysadmins run these CLI checks inside deployment test files to verify that Google Cloud credentials and API routing policies are properly aligned before launching apps.")
-
-
-# ==================== SLIDE 10: LLM SAFETY & MONITORING INTEGRATION ====================
-slide10 = prs.slides.add_slide(blank_layout)
-set_slide_background(slide10)
-add_slide_header(slide10, "MLOps Monitoring", "LLM Safety & Monitoring Integration")
-
-bullets10 = [
+bullets8 = [
     ("Content Moderation Filters", "Built-in safety hooks that evaluate model queries and responses for harassment, hate speech, and explicit blocks."),
     ("Semantic Drift Checks", "Monitoring client prompt query patterns over time to capture task drift or adversarial injection patterns."),
     ("Guardrails Integration", "Wrapping model routes with external middleware to filter toxic language prior to client presentation.")
 ]
-add_bullets(slide10, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets10)
-add_example_box(slide10, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
+add_bullets(slide8, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets8)
+add_example_box(slide8, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
     "An input prompt contains toxic patterns. The Vertex AI safety layer intercepts the request, blocks execution, and returns a structured response indicating a blocked classification.")
 
-tf_card10 = add_card_box(slide10, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "MLOps Operations Loop")
-p_desc10 = tf_card10.add_paragraph()
-p_desc10.text = "Deploying models in production requires active validation loops. Integrating safety checks in the prediction pipeline prevents reputation risks, toxic outputs, and jailbreak exploits."
-format_run(p_desc10.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
+tf_card8 = add_card_box(slide8, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "MLOps Operations Loop")
+p_desc8 = tf_card8.add_paragraph()
+p_desc8.text = "Deploying models in production requires active validation loops. Integrating safety checks in the prediction pipeline prevents reputation risks, toxic outputs, and jailbreak exploits."
+format_run(p_desc8.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
 
 
-# ==================== SLIDE 11: IAM PERMISSIONS & SECURITY GOVERNANCE ====================
-slide11 = prs.slides.add_slide(blank_layout)
-set_slide_background(slide11)
-add_slide_header(slide11, "Security & Governance", "IAM Permissions & Security Governance")
+# ==================== SLIDE 9: ARCHITECT'S SUMMARY ====================
+slide9 = prs.slides.add_slide(blank_layout)
+set_slide_background(slide9)
+add_slide_header(slide9, "Takeaways", "Architect's Checklist")
 
-bullets11 = [
-    ("roles/aiplatform.user", "Allows invoking foundation models, running predictions, and running prompt lookups."),
-    ("roles/aiplatform.admin", "Allows full access to import datasets, deploy custom endpoints, and delete models."),
-    ("VPC Service Controls", "Wraps Gemini calls in virtual security networks, blocking data extraction to external networks.")
-]
-add_bullets(slide11, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets11)
-add_example_box(slide11, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
-    "The frontend service account is granted the aiplatform.user role, enabling it to call Gemini predictions while blocking structural configuration edits.")
-
-tf_card11 = add_card_box(slide11, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Security Rule")
-p_desc11 = tf_card11.add_paragraph()
-p_desc11.text = "Service accounts attached to web servers must be restricted to roles/aiplatform.user to adhere to the principle of least privilege, preventing model registry access."
-format_run(p_desc11.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
-
-
-# ==================== SLIDE 12: ARCHITECT'S SUMMARY ====================
-slide12 = prs.slides.add_slide(blank_layout)
-set_slide_background(slide12)
-add_slide_header(slide12, "Takeaways", "Architect's Checklist")
-
-bullets12 = [
+bullets9 = [
     ("Zero-Shot/Few-Shot", "First attempt prompting configurations before investing in custom parameter tuning."),
     ("Retrieval-Augmented Gen", "Ground models using Vector Search to mitigate hallucinations and present fresh datasets."),
     ("Cost/Latency", "Select Gemini Flash for quick, budget serving. Reserve Pro for complex reasoning."),
     ("Governance", "Enforce IAM role boundaries and safety filter limits at the endpoint level.")
 ]
-add_bullets(slide12, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets12)
-add_example_box(slide12, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
+add_bullets(slide9, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets9)
+add_example_box(slide9, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
     "On the exam, if a scenario asks to connect private enterprise PDF documents with LLM outputs without model retraining, the answer is always RAG with Vector Search.")
 
-tf_card12 = add_card_box(slide12, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Exam Tip", border_color=COLOR_ACCENT_GREEN)
-p_desc12 = tf_card12.add_paragraph()
-p_desc12.text = "If the exam asks to adapt a model to proprietary, frequently changing documentation under tight budgets, **Retrieval-Augmented Generation (RAG)** is the correct choice over custom fine-tuning."
-format_run(p_desc12.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
+tf_card9 = add_card_box(slide9, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Exam Tip", border_color=COLOR_ACCENT_GREEN)
+p_desc9 = tf_card9.add_paragraph()
+p_desc9.text = "If the exam asks to adapt a model to proprietary, frequently changing documentation under tight budgets, **Retrieval-Augmented Generation (RAG)** is the correct choice over custom fine-tuning."
+format_run(p_desc9.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
 
+
+# ==================== PRACTICE SCENARIOS (Q&A SLIDES 10-19) ====================
+scenarios = [
+    {
+        "category": "Practice Scenario 1 of 10",
+        "title": "Choosing Fine-Tuning vs RAG",
+        "question": "A financial service company wants to build an internal virtual assistant to answer questions about dynamic company policies and daily updated mortgage rates. The documents contain sensitive proprietary information. What is the most cost-effective and architecturally sound pattern on GCP to implement this without exposing the base model to stale information?",
+        "options": [
+            ("A", "Run a Vertex AI custom training pipeline to perform full parameter fine-tuning on the policy documents daily."),
+            ("B", "Build a Retrieval-Augmented Generation (RAG) pipeline by chunking the documents, generating embeddings, indexing them in Vertex AI Vector Search, and injecting retrieved contexts into the prompt."),
+            ("C", "Train a custom BigQuery ML logistic regression model to predict mortgage text outputs."),
+            ("D", "Train a student model using model distillation on Vertex AI.")
+        ],
+        "correct": "B",
+        "explanation": "Retrieval-Augmented Generation (RAG) is the standard pattern to connect foundation models to dynamic, proprietary, and frequently updated external documents. It avoids the high computation cost of continuous model retraining and eliminates hallucinations by grounding the prompt with fresh retrieved context.",
+        "ref": "Vertex AI - RAG Overview (https://cloud.google.com/vertex-ai/docs/generative-ai/rag-overview)"
+    },
+    {
+        "category": "Practice Scenario 2 of 10",
+        "title": "Hyperparameter Tuning for Diversity",
+        "question": "You are building a creative marketing copy writer application powered by Gemini 1.5 Pro. The marketing team complains that the generated ad copy is too repetitive and predictable. How should you adjust the inference hyperparameters to increase the creativity and variety of the generated text?",
+        "options": [
+            ("A", "Lower the Temperature closer to 0.0 and set Top-K to 1."),
+            ("B", "Increase the Temperature (e.g., to 1.0 or higher) and set a higher Top-P (e.g., 0.95) to allow a wider nucleus of candidate tokens."),
+            ("C", "Increase the size of the model's context window."),
+            ("D", "Freeze early transformer layers and perform LoRA fine-tuning.")
+        ],
+        "correct": "B",
+        "explanation": "Temperature scales the next-token probability distribution; higher values increase randomness (creativity). Top-P (nucleus sampling) defines the cumulative probability boundary; raising it includes a wider set of candidate tokens, increasing diversity.",
+        "ref": "Vertex AI - Configure Parameters (https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-parameters)"
+    },
+    {
+        "category": "Practice Scenario 3 of 10",
+        "title": "Content Moderation & Safety Filters",
+        "question": "A healthcare booking agent powered by the Gemini API must be deployed to the public. To ensure safety compliance, the agent must not generate dangerous medical advice or respond to sexually explicit inputs. How should you configure safety filters on Vertex AI?",
+        "options": [
+            ("A", "Build a custom BERT classifier container in GKE to scan all outputs."),
+            ("B", "Configure the safetySettings block in the Gemini API request, mapping categories like HARM_CATEGORY_DANGEROUS_CONTENT to block thresholds (e.g., BLOCK_LOW_AND_ABOVE)."),
+            ("C", "Wrap the model in a private VPC Service Controls perimeter."),
+            ("D", "Perform supervised fine-tuning using toxic datasets.")
+        ],
+        "correct": "B",
+        "explanation": "Vertex AI provides built-in safety filters for categories like Hate Speech, Harassment, Sexually Explicit, and Dangerous Content. Developers adjust block thresholds directly in the generation config API request to catch and filter violations.",
+        "ref": "Vertex AI - Safety Settings (https://cloud.google.com/vertex-ai/docs/generative-ai/safety-settings)"
+    },
+    {
+        "category": "Practice Scenario 4 of 10",
+        "title": "Grounding with Enterprise Search",
+        "question": "A company wants to build a search portal over thousands of internal product manuals without writing complex chunking, embedding, or database management code. Which Google Cloud service should they use?",
+        "options": [
+            ("A", "Vertex AI Custom Ingest pipelines on Dataproc."),
+            ("B", "Vertex AI Agent Builder with a Data Store connected to their Cloud Storage bucket containing the manuals."),
+            ("C", "BigQuery ML with external model references."),
+            ("D", "Cloud Translation API connected to Pub/Sub.")
+        ],
+        "correct": "B",
+        "explanation": "Vertex AI Agent Builder (specifically Enterprise Search) provides an out-of-the-box, no-code/low-code RAG system. By pointing a Data Store to a GCS bucket, the service automatically manages document ingestion, chunking, embeddings, and semantic grounding.",
+        "ref": "Agent Builder - Create Data Store (https://cloud.google.com/generative-ai-app-builder/docs/create-datastore-search)"
+    },
+    {
+        "category": "Practice Scenario 5 of 10",
+        "title": "Parameter-Efficient Fine-Tuning",
+        "question": "You need to adapt an open-source model (such as Gemma) to output proprietary medical code formats. You have limited GPU compute budget for training. Which training methodology is recommended on Vertex AI?",
+        "options": [
+            ("A", "Full parameter fine-tuning of all 7 billion model weights."),
+            ("B", "Reinforcement Learning from Human Feedback (RLHF) from scratch."),
+            ("C", "Parameter-Efficient Fine-Tuning (PEFT) using Low-Rank Adaptation (LoRA) to freeze base weights and train only small adapter matrices."),
+            ("D", "Unsupervised pre-training on medical databases.")
+        ],
+        "correct": "C",
+        "explanation": "PEFT/LoRA freezes the pre-trained model parameters and introduces small, trainable rank decomposition matrices. This dramatically reduces GPU memory requirements and training times, making custom domain training highly cost-efficient.",
+        "ref": "Vertex AI - Tuning Overview (https://cloud.google.com/vertex-ai/docs/generative-ai/tuning/tuning-overview)"
+    },
+    {
+        "category": "Practice Scenario 6 of 10",
+        "title": "Model Distillation",
+        "question": "An automotive company wants to run a natural language voice assistant inside cars. The hardware in the car has severe memory and processing limits and cannot host a large model. However, the assistant must mimic the reasoning quality of Gemini 1.5 Pro. How can Vertex AI solve this?",
+        "options": [
+            ("A", "Set up a high-performance TPU cluster inside the car dashboard."),
+            ("B", "Execute a Model Distillation job on Vertex AI, using Gemini 1.5 Pro as the teacher to train a small, compact student model (like Gemma 2B) for edge deployment."),
+            ("C", "Deploy a gRPC API connection requiring active satellite cellular networks."),
+            ("D", "Convert the model weights to TF Lite format without retraining.")
+        ],
+        "correct": "B",
+        "explanation": "Model distillation on Vertex AI uses a large, high-capability teacher model to train a smaller student model. The student model learns to approximate the teacher's outputs, enabling lightweight, low-latency deployments that retain high reasoning quality.",
+        "ref": "Vertex AI - Model Distillation (https://cloud.google.com/vertex-ai/docs/generative-ai/models/distill-model)"
+    },
+    {
+        "category": "Practice Scenario 7 of 10",
+        "title": "Enforcing Structured JSON Outputs",
+        "question": "A travel booking app uses Gemini to extract flight details (origin, destination, departure date) from customer emails. The extracted data must be fed into a legacy database that strictly accepts only valid JSON matching a specific schema. How should you invoke the Gemini API?",
+        "options": [
+            ("A", "Instruct the model in the prompt to write JSON and write a regex parser to fix errors."),
+            ("B", "Use supervised fine-tuning to teach the model JSON syntax."),
+            ("C", "Define a JSON schema using OpenAPI standards and pass it as the responseSchema configuration parameter in the generation config."),
+            ("D", "Call Document AI Form Parser before prompting the model.")
+        ],
+        "correct": "C",
+        "explanation": "The Gemini API supports schema enforcement. By passing an OpenAPI schema in responseSchema (and setting responseMimeType to application/json), the model is constrained to generate outputs that strictly comply with the target JSON structure, preventing parser errors.",
+        "ref": "Vertex AI - Enforcing Schema (https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/control-structured-output)"
+    },
+    {
+        "category": "Practice Scenario 8 of 10",
+        "title": "IAM Permissions for Prompt Design",
+        "question": "An external contractor joins your team to help prototype prompts and system instructions inside Vertex AI Studio. The contractor should not be able to train custom models, deploy endpoints, or access production billing. What IAM role is appropriate?",
+        "options": [
+            ("A", "roles/aiplatform.admin"),
+            ("B", "roles/viewer"),
+            ("C", "roles/aiplatform.user"),
+            ("D", "roles/bigquery.dataEditor")
+        ],
+        "correct": "C",
+        "explanation": "The roles/aiplatform.user role provides the necessary permissions to prototype prompts, call model prediction routes, and use Vertex AI Studio playgrounds, while restricting access to administrative settings.",
+        "ref": "Vertex AI - Access Control (https://cloud.google.com/vertex-ai/docs/general/access-control)"
+    },
+    {
+        "category": "Practice Scenario 9 of 10",
+        "title": "Mitigating Summary Hallucinations",
+        "question": "A hospital uses a model to summarize patient discharge notes. During trials, the model occasionally inserts fabricated medications not present in the patient's records. Which strategy is most effective to eliminate these hallucinations?",
+        "options": [
+            ("A", "Set the Temperature to 1.5 and increase Top-K."),
+            ("B", "Apply supervised fine-tuning with a general vocabulary corpus."),
+            ("C", "Ground the model by passing the complete medical record in the prompt context and setting the Temperature to 0.0 to enforce strict factual compliance."),
+            ("D", "Switch to a smaller model size.")
+        ],
+        "correct": "C",
+        "explanation": "Hallucinations are mitigated by grounding the model in the source context and setting the Temperature to 0.0 (or very low) to make token selection deterministic. This forces the model to synthesize text strictly from the provided inputs.",
+        "ref": "Vertex AI - Grounding Generative Models (https://cloud.google.com/blog/products/ai-machine-learning/grounding-generative-ai-models-with-vertex-ai)"
+    },
+    {
+        "category": "Practice Scenario 10 of 10",
+        "title": "Optimizing Token Costs",
+        "question": "You run a customer support chatbot that pre-loads a massive 50,000-token company FAQ context into every prompt. The chatbot processes thousands of queries hourly, leading to high API token costs. How can you optimize costs on Vertex AI?",
+        "options": [
+            ("A", "Shorten the FAQ list manually to 500 tokens."),
+            ("B", "Enable Context Caching on Vertex AI to cache the FAQ token representations, paying a lower rate for cached tokens during subsequent queries."),
+            ("C", "Migrate the model to run locally on a VM instance."),
+            ("D", "Increase the Temperature to compress outputs.")
+        ],
+        "correct": "B",
+        "explanation": "Context Caching allows caching of large, static context data (such as FAQs, system instructions, or document chunks) in the Gemini API. Subsequent calls referencing the cache pay a significantly lower rate for token processing, optimizing cost and reducing latency.",
+        "ref": "Vertex AI - Context Caching Overview (https://cloud.google.com/vertex-ai/docs/generative-ai/context-caching-overview)"
+    }
+]
+
+for s in scenarios:
+    add_qa_slide(s["category"], s["title"], s["question"], s["options"], s["correct"], s["explanation"], s["ref"])
 
 # Save PowerPoint deck
 output_path = "Introduction_to_Generative_AI.pptx"

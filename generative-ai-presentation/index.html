@@ -307,67 +307,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 8: GENERATIVE AI SDK (PYTHON) -->
-        <section class="slide">
-            <span class="slide-category">Developer Guide</span>
-            <h2 class="slide-title">Vertex AI Gemini API SDK (Python)</h2>
-            <div class="slide-body">
-                <p style="margin-bottom: 10px;">Interacting with Gemini models programmatically using the official google-genai library:</p>
-                <div class="code-wrapper">
-                    <div class="code-header">
-                        <span>Python GenAI Client SDK</span>
-                    </div>
-                    <pre class="code-content"><span class="code-keyword">from</span> google <span class="code-keyword">import</span> genai
-<span class="code-keyword">from</span> google.genai <span class="code-keyword">import</span> types
-
-client = genai.Client()
-
-<span class="code-comment"># Generate grounded text using Gemini 1.5 Flash</span>
-response = client.models.generate_content(
-    model=<span class="code-string">"gemini-1.5-flash"</span>,
-    contents=<span class="code-string">"What is the self-attention mechanism in Transformers?"</span>,
-    config=types.GenerateContentConfig(
-        temperature=<span class="code-parameter">0.2</span>,
-        system_instruction=<span class="code-string">"You are an expert GCP ML Certification Instructor."</span>
-    )
-)
-<span class="code-function">print</span>(response.text)</pre>
-                </div>
-                <div class="example-box">
-                    <strong>Endpoint Integration Example</strong>
-                    This code is used inside web services to call Gemini. Configuring low temperature (0.2) and clear system instructions guarantees focused, fact-grounded responses for API callers.
-                </div>
-            </div>
-        </section>
-
-        <!-- SLIDE 9: GOOGLE CLOUD CLI REFERENCE -->
-        <section class="slide">
-            <span class="slide-category">Operations Guide</span>
-            <h2 class="slide-title">Google Cloud CLI & Curl Reference</h2>
-            <div class="slide-body">
-                <p style="margin-bottom: 10px;">Interacting with Vertex AI model endpoints directly via command line and curl:</p>
-                <div class="code-wrapper">
-                    <div class="code-header">
-                        <span>gcloud & curl raw calls</span>
-                    </div>
-                    <pre class="code-content"><span class="code-comment"># Call Gemini API via curl using gcloud authorization tokens</span>
-curl -X POST \
-  -H <span class="code-string">"Authorization: Bearer $(gcloud auth print-access-token)"</span> \
-  -H <span class="code-string">"Content-Type: application/json"</span> \
-  https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/gemini-1.5-flash:generateContent \
-  -d '{
-    <span class="code-string">"contents"</span>: { <span class="code-string">"parts"</span>: { <span class="code-string">"text"</span>: <span class="code-string">"Explain transfer learning."</span> } },
-    <span class="code-string">"generationConfig"</span>: { <span class="code-string">"temperature"</span>: <span class="code-parameter">0.4</span> }
-  }'</pre>
-                </div>
-                <div class="example-box">
-                    <strong>DevOps Verification Example</strong>
-                    Sysadmins run these CLI checks inside deployment test files to verify that Google Cloud credentials and API routing policies are properly aligned before launching apps.
-                </div>
-            </div>
-        </section>
-
-        <!-- SLIDE 10: INTEGRATION WITH MODEL MONITORING -->
+        <!-- SLIDE 8: LLM SAFETY & MONITORING INTEGRATION -->
         <section class="slide">
             <span class="slide-category">MLOps Monitoring</span>
             <h2 class="slide-title">LLM Safety & Monitoring Integration</h2>
@@ -395,35 +335,7 @@ curl -X POST \
             </div>
         </section>
 
-        <!-- SLIDE 11: IAM & SECURITY GOVERNANCE -->
-        <section class="slide">
-            <span class="slide-category">Security & Governance</span>
-            <h2 class="slide-title">IAM Permissions & Security Governance</h2>
-            <div class="split-grid">
-                <div class="slide-body">
-                    <ul>
-                        <li><strong>roles/aiplatform.user:</strong> Allows invoking foundation models, running predictions, and running prompt lookups.</li>
-                        <li><strong>roles/aiplatform.admin:</strong> Allows full access to import datasets, deploy custom endpoints, and delete models.</li>
-                        <li><strong>VPC Service Controls:</strong> Wraps Gemini calls in virtual security networks, blocking data extraction to external networks.</li>
-                    </ul>
-                    <div class="example-box">
-                        <strong>Deployment Example</strong>
-                        The frontend service account is granted the <code>aiplatform.user</code> role, enabling it to call Gemini predictions while blocking structural configuration edits.
-                    </div>
-                </div>
-                <div class="glass-card">
-                    <div class="card-title">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Security Rule</span>
-                    </div>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        Service accounts attached to web servers must be restricted to <code>roles/aiplatform.user</code> to adhere to the principle of least privilege, preventing model registry access.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SLIDE 12: ARCHITECT'S SUMMARY -->
+        <!-- SLIDE 9: ARCHITECT'S SUMMARY -->
         <section class="slide">
             <span class="slide-category">Takeaways</span>
             <h2 class="slide-title">Architect's Checklist</h2>
@@ -452,6 +364,316 @@ curl -X POST \
             </div>
         </section>
 
+        <!-- SLIDE 10: PRACTICE SCENARIO 1 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 1 of 10</span>
+            <h2 class="slide-title">Choosing Fine-Tuning vs RAG</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A financial service company wants to build an internal virtual assistant to answer questions about dynamic company policies and daily updated mortgage rates. The documents contain sensitive proprietary information. What is the most cost-effective and architecturally sound pattern on GCP to implement this without exposing the base model to stale information?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Run a Vertex AI custom training pipeline to perform full parameter fine-tuning on the policy documents daily.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Build a Retrieval-Augmented Generation (RAG) pipeline by chunking the documents, generating embeddings, indexing them in Vertex AI Vector Search, and injecting retrieved contexts into the prompt.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Train a custom BigQuery ML logistic regression model to predict mortgage text outputs.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Train a student model using model distillation on Vertex AI.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Retrieval-Augmented Generation (RAG) is the standard pattern to connect foundation models to dynamic, proprietary, and frequently updated external documents. It avoids the high computation cost of continuous model retraining and eliminates hallucinations by grounding the prompt with fresh retrieved context.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/rag-overview" target="_blank">Vertex AI - RAG Overview</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: PRACTICE SCENARIO 2 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 2 of 10</span>
+            <h2 class="slide-title">Hyperparameter Tuning for Diversity</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">You are building a creative marketing copy writer application powered by Gemini 1.5 Pro. The marketing team complains that the generated ad copy is too repetitive and predictable. How should you adjust the inference hyperparameters to increase the creativity and variety of the generated text?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Lower the Temperature closer to 0.0 and set Top-K to 1.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Increase the Temperature (e.g., to 1.0 or higher) and set a higher Top-P (e.g., 0.95) to allow a wider nucleus of candidate tokens.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Increase the size of the model's context window.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Freeze early transformer layers and perform LoRA fine-tuning.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Temperature scales the next-token probability distribution; higher values increase randomness (creativity). Top-P (nucleus sampling) defines the cumulative probability boundary; raising it includes a wider set of candidate tokens, increasing diversity.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-parameters" target="_blank">Vertex AI - Configure Parameters</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: PRACTICE SCENARIO 3 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 3 of 10</span>
+            <h2 class="slide-title">Content Moderation & Safety Filters</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A healthcare booking agent powered by the Gemini API must be deployed to the public. To ensure safety compliance, the agent must not generate dangerous medical advice or respond to sexually explicit inputs. How should you configure safety filters on Vertex AI?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Build a custom BERT classifier container in GKE to scan all outputs.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Configure the safetySettings block in the Gemini API request, mapping categories like HARM_CATEGORY_DANGEROUS_CONTENT to block thresholds (e.g., BLOCK_LOW_AND_ABOVE).</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Wrap the model in a private VPC Service Controls perimeter.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Perform supervised fine-tuning using toxic datasets.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Vertex AI provides built-in safety filters for categories like Hate Speech, Harassment, Sexually Explicit, and Dangerous Content. Developers adjust block thresholds directly in the generation config API request to catch and filter violations.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/safety-settings" target="_blank">Vertex AI - Safety Settings</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 13: PRACTICE SCENARIO 4 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 4 of 10</span>
+            <h2 class="slide-title">Grounding with Enterprise Search</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A company wants to build a search portal over thousands of internal product manuals without writing complex chunking, embedding, or database management code. Which Google Cloud service should they use?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Vertex AI Custom Ingest pipelines on Dataproc.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Vertex AI Agent Builder with a Data Store connected to their Cloud Storage bucket containing the manuals.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> BigQuery ML with external model references.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Cloud Translation API connected to Pub/Sub.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Vertex AI Agent Builder (specifically Enterprise Search) provides an out-of-the-box, no-code/low-code RAG system. By pointing a Data Store to a GCS bucket, the service automatically manages document ingestion, chunking, embeddings, and semantic grounding.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/generative-ai-app-builder/docs/create-datastore-search" target="_blank">Agent Builder - Create Data Store</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 14: PRACTICE SCENARIO 5 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 5 of 10</span>
+            <h2 class="slide-title">Parameter-Efficient Fine-Tuning</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">You need to adapt an open-source model (such as Gemma) to output proprietary medical code formats. You have limited GPU compute budget for training. Which training methodology is recommended on Vertex AI?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Full parameter fine-tuning of all 7 billion model weights.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Reinforcement Learning from Human Feedback (RLHF) from scratch.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Parameter-Efficient Fine-Tuning (PEFT) using Low-Rank Adaptation (LoRA) to freeze base weights and train only small adapter matrices.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Unsupervised pre-training on medical databases.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> PEFT/LoRA freezes the pre-trained model parameters and introduces small, trainable rank decomposition matrices. This dramatically reduces GPU memory requirements and training times, making custom domain training highly cost-efficient.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/tuning/tuning-overview" target="_blank">Vertex AI - Tuning Overview</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 16: PRACTICE SCENARIO 6 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 6 of 10</span>
+            <h2 class="slide-title">Model Distillation</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">An automotive company wants to run a natural language voice assistant inside cars. The hardware in the car has severe memory and processing limits and cannot host a large model. However, the assistant must mimic the reasoning quality of Gemini 1.5 Pro. How can Vertex AI solve this?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Set up a high-performance TPU cluster inside the car dashboard.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Execute a Model Distillation job on Vertex AI, using Gemini 1.5 Pro as the teacher to train a small, compact student model (like Gemma 2B) for edge deployment.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Deploy a gRPC API connection requiring active satellite cellular networks.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Convert the model weights to TF Lite format without retraining.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Model distillation on Vertex AI uses a large, high-capability teacher model to train a smaller student model. The student model learns to approximate the teacher's outputs, enabling lightweight, low-latency deployments that retain high reasoning quality.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/models/distill-model" target="_blank">Vertex AI - Model Distillation</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 16: PRACTICE SCENARIO 7 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 7 of 10</span>
+            <h2 class="slide-title">Enforcing Structured JSON Outputs</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A travel booking app uses Gemini to extract flight details (origin, destination, departure date) from customer emails. The extracted data must be fed into a legacy database that strictly accepts only valid JSON matching a specific schema. How should you invoke the Gemini API?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Instruct the model in the prompt to write JSON and write a regex parser to fix errors.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Use supervised fine-tuning to teach the model JSON syntax.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Define a JSON schema using OpenAPI standards and pass it as the responseSchema configuration parameter in the generation config.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Call Document AI Form Parser before prompting the model.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> The Gemini API supports schema enforcement. By passing an OpenAPI schema in responseSchema (and setting responseMimeType to application/json), the model is constrained to generate outputs that strictly comply with the target JSON structure, preventing parser errors.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/control-structured-output" target="_blank">Vertex AI - Enforcing Schema</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 17: PRACTICE SCENARIO 8 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 8 of 10</span>
+            <h2 class="slide-title">IAM Permissions for Prompt Design</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">An external contractor joins your team to help prototype prompts and system instructions inside Vertex AI Studio. The contractor should not be able to train custom models, deploy endpoints, or access production billing. What IAM role is appropriate?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> roles/aiplatform.admin</div>
+                        <div class="question-option"><span class="option-letter">B.</span> roles/viewer</div>
+                        <div class="question-option"><span class="option-letter">C.</span> roles/aiplatform.user</div>
+                        <div class="question-option"><span class="option-letter">D.</span> roles/bigquery.dataEditor</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> The roles/aiplatform.user role provides the necessary permissions to prototype prompts, call model prediction routes, and use Vertex AI Studio playgrounds, while restricting access to administrative settings.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/general/access-control" target="_blank">Vertex AI - Access Control</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 18: PRACTICE SCENARIO 9 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 9 of 10</span>
+            <h2 class="slide-title">Mitigating Summary Hallucinations</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">A hospital uses a model to summarize patient discharge notes. During trials, the model occasionally inserts fabricated medications not present in the patient's records. Which strategy is most effective to eliminate these hallucinations?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Set the Temperature to 1.5 and increase Top-K.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Apply supervised fine-tuning with a general vocabulary corpus.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Ground the model by passing the complete medical record in the prompt context and setting the Temperature to 0.0 to enforce strict factual compliance.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Switch to a smaller model size.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">C</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Hallucinations are mitigated by grounding the model in the source context and setting the Temperature to 0.0 (or very low) to make token selection deterministic. This forces the model to synthesize text strictly from the provided inputs.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/blog/products/ai-machine-learning/grounding-generative-ai-models-with-vertex-ai" target="_blank">Vertex AI - Grounding Generative Models</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 19: PRACTICE SCENARIO 10 -->
+        <section class="slide">
+            <span class="slide-category">Practice Scenario 10 of 10</span>
+            <h2 class="slide-title">Optimizing Token Costs</h2>
+            <div class="split-grid">
+                <div class="slide-body">
+                    <p style="font-weight: 500; color: var(--text-primary); margin-bottom: 15px;">You run a customer support chatbot that pre-loads a massive 50,000-token company FAQ context into every prompt. The chatbot processes thousands of queries hourly, leading to high API token costs. How can you optimize costs on Vertex AI?</p>
+                    <div class="question-options">
+                        <div class="question-option"><span class="option-letter">A.</span> Shorten the FAQ list manually to 500 tokens.</div>
+                        <div class="question-option"><span class="option-letter">B.</span> Enable Context Caching on Vertex AI to cache the FAQ token representations, paying a lower rate for cached tokens during subsequent queries.</div>
+                        <div class="question-option"><span class="option-letter">C.</span> Migrate the model to run locally on a VM instance.</div>
+                        <div class="question-option"><span class="option-letter">D.</span> Increase the Temperature to compress outputs.</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--accent-green);"></i>
+                        <span>Validation Panel</span>
+                    </div>
+                    <details class="answer-details">
+                        <summary>Verify Answer</summary>
+                        <div class="answer-content">
+                            <p style="margin-bottom: 8px;"><strong>Correct Answer: <span style="color: var(--accent-green);">B</span></strong></p>
+                            <p style="margin-bottom: 12px;"><strong>Explanation:</strong> Context Caching allows caching of large, static context data (such as FAQs, system instructions, or document chunks) in the Gemini API. Subsequent calls referencing the cache pay a significantly lower rate for token processing, optimizing cost and reducing latency.</p>
+                            <p><strong>GCP Reference:</strong> <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/context-caching-overview" target="_blank">Vertex AI - Context Caching Overview</a></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
         <!-- Presentation Navigation overlay controls -->
         <div class="controls-overlay">
             <button id="prev-btn" class="control-btn" title="Previous Slide (Left Arrow)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -461,7 +683,7 @@ curl -X POST \
         <!-- Footer Page counter -->
         <footer class="presentation-footer">
             <span>Introduction to Generative AI Presentation</span>
-            <span id="page-num" class="slide-counter">Slide 1 of 12</span>
+            <span id="page-num" class="slide-counter">Slide 1 of 19</span>
             <span>Google Cloud ML Engineer Cert</span>
         </footer>
     </div>
