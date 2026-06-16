@@ -43,6 +43,12 @@ The presentation is fully compiled using a premium **Light-Grey (Zinc/Platinum)*
 │   ├── app.js                           # Slide navigation controller
 │   ├── generate_pptx.py                 # python-pptx Slide Compiler Script
 │   └── Introduction_to_Generative_AI.pptx # Compiled Widescreen PowerPoint Deck
+├── llm-presentation/
+│   ├── index.html                       # Standalone LLM Web slides
+│   ├── style.css                        # Slide specific light-grey styles
+│   ├── app.js                           # Slide navigation controller
+│   ├── generate_pptx.py                 # python-pptx Slide Compiler Script
+│   └── Introduction_to_LLM.pptx         # Compiled Widescreen PowerPoint Deck
 └── .gitignore                           # Excludes logs and python cache files
 ```
 
@@ -59,6 +65,7 @@ python -m http.server 8089
 Then open your browser and navigate to:
 * Vertex AI Feature Store Presentation: 👉 [http://localhost:8089/featurestore-presentation/](http://localhost:8089/featurestore-presentation/)
 * Introduction to Generative AI Presentation: 👉 [http://localhost:8089/generative-ai-presentation/](http://localhost:8089/generative-ai-presentation/)
+* Introduction to LLM Presentation: 👉 [http://localhost:8089/llm-presentation/](http://localhost:8089/llm-presentation/)
 
 ### 2. Generate/Recompile the PowerPoint Slide Decks
 To modify slide contents or colors and re-compile either PowerPoint file, ensure you have Python and `python-pptx` installed:
@@ -71,6 +78,9 @@ python featurestore-presentation/generate_pptx.py
 
 # Run compiler for Generative AI
 python generative-ai-presentation/generate_pptx.py
+
+# Run compiler for Introduction to LLM
+python llm-presentation/generate_pptx.py
 ```
 This will compile and write/overwrite the `.pptx` file in their respective directories.
 
