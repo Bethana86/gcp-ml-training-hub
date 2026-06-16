@@ -257,15 +257,64 @@ add_bullets(slide3, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets3
 add_example_box(slide3, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
     "If you type: \"The sky is\", the model computes the mathematical likelihood of next words and selects \"blue\". It then takes \"The sky is blue\" as input to predict the next word.")
 
-tf_card3 = add_card_box(slide3, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Key Core Block")
-p_desc3 = tf_card3.add_paragraph()
-p_desc3.text = "Modern LLMs use a \"Decoder-Only\" architecture. Instead of translating inputs to a hidden code first, they directly read your text, analyze word relationships in parallel, and output the probability of what word should follow."
-p_desc3.space_after = Pt(16)
-format_run(p_desc3.runs[0], font_name="Segoe UI", font_size=Pt(11), color=COLOR_TEXT_SECONDARY)
+# Draw Diagram card on the right
+add_card_box(slide3, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Transformer Architecture Flow")
 
-p_ex3 = tf_card3.add_paragraph()
-p_ex3.text = "Note: This structure is highly efficient for writing creative, flowing text and code."
-format_run(p_ex3.runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_ACCENT_GREEN, bold=True)
+# Nodes: x centered inside 8.0 to 12.5 (center = 10.25). Width = 3.0, so left = 8.75.
+# Height = 0.5.
+# y positions: 2.4, 3.4, 4.4, 5.4.
+# 1. Input Text
+tr1_shape = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.75), Inches(2.4), Inches(3.0), Inches(0.5))
+tr1_shape.fill.solid()
+tr1_shape.fill.fore_color.rgb = COLOR_CARD
+tr1_shape.line.color.rgb = COLOR_TEXT_MUTED
+tr1_shape.line.width = Pt(1.5)
+tf_tr1 = tr1_shape.text_frame
+tf_tr1.word_wrap = True
+tf_tr1.paragraphs[0].text = "Input: [\"The\", \"sky\", \"is\"]"
+tf_tr1.paragraphs[0].alignment = PP_ALIGN.CENTER
+format_run(tf_tr1.paragraphs[0].runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_TEXT_PRIMARY, bold=True)
+
+# 2. Self-Attention
+tr2_shape = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.75), Inches(3.4), Inches(3.0), Inches(0.5))
+tr2_shape.fill.solid()
+tr2_shape.fill.fore_color.rgb = COLOR_CARD
+tr2_shape.line.color.rgb = COLOR_ACCENT_PINK
+tr2_shape.line.width = Pt(1.8)
+tf_tr2 = tr2_shape.text_frame
+tf_tr2.word_wrap = True
+tf_tr2.paragraphs[0].text = "Self-Attention (Word Weights)"
+tr2_shape.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+format_run(tf_tr2.paragraphs[0].runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_TEXT_PRIMARY, bold=True)
+
+# 3. Feed-Forward
+tr3_shape = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.75), Inches(4.4), Inches(3.0), Inches(0.5))
+tr3_shape.fill.solid()
+tr3_shape.fill.fore_color.rgb = COLOR_CARD
+tr3_shape.line.color.rgb = COLOR_ACCENT_BLUE
+tr3_shape.line.width = Pt(1.5)
+tf_tr3 = tr3_shape.text_frame
+tf_tr3.word_wrap = True
+tf_tr3.paragraphs[0].text = "Feed-Forward (Dense Layer)"
+tr3_shape.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+format_run(tf_tr3.paragraphs[0].runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_TEXT_PRIMARY, bold=True)
+
+# 4. Next Token
+tr4_shape = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.75), Inches(5.4), Inches(3.0), Inches(0.5))
+tr4_shape.fill.solid()
+tr4_shape.fill.fore_color.rgb = COLOR_CARD
+tr4_shape.line.color.rgb = COLOR_ACCENT_GREEN
+tr4_shape.line.width = Pt(1.8)
+tf_tr4 = tr4_shape.text_frame
+tf_tr4.word_wrap = True
+tf_tr4.paragraphs[0].text = "Output Word: \"blue\""
+tr4_shape.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+format_run(tf_tr4.paragraphs[0].runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_TEXT_PRIMARY, bold=True)
+
+# Arrows (y spans: 2.9->3.4, 3.9->4.4, 4.9->5.4)
+draw_arrow_line(slide3, Inches(10.25), Inches(2.9), Inches(10.25), Inches(3.4), COLOR_ACCENT_PINK)
+draw_arrow_line(slide3, Inches(10.25), Inches(3.9), Inches(10.25), Inches(4.4), COLOR_ACCENT_BLUE)
+draw_arrow_line(slide3, Inches(10.25), Inches(4.9), Inches(10.25), Inches(5.4), COLOR_ACCENT_GREEN)
 
 
 # ==================== SLIDE 4: HOW COMPUTERS READ TEXT ====================
@@ -598,24 +647,24 @@ p_ex11.text = "Target: Minimize hallucinations by replacing open generation with
 format_run(p_ex11.runs[0], font_name="Segoe UI", font_size=Pt(10.5), color=COLOR_ACCENT_PINK, bold=True)
 
 
-# ==================== SLIDE 12: ARCHITECT'S CHECKLIST ====================
+# ==================== SLIDE 12: KEY TAKEAWAYS ====================
 slide12 = prs.slides.add_slide(blank_layout)
 set_slide_background(slide12)
-add_slide_header(slide12, "Takeaways", "Architect's Summary Checklist")
+add_slide_header(slide12, "Takeaways", "Key Takeaways")
 
 bullets12 = [
-    ("Model Selection", "Choose small models (like Gemma 2B) for cheap edge devices, and large models (like Gemini Pro) for complex reasoning."),
-    ("RAG vs. Tuning", "Always use prompt grounding (RAG) for changing facts. Save fine-tuning for style, tone, or formatting rules."),
-    ("Latency Budget", "Speed up your chat apps using KV Caching and weight quantization."),
-    ("Security", "Deploy moderation filters at the API level to block malicious injections.")
+    ("Match Model to Task", "Use small models (like Gemma 2B) for cheap, fast local tasks. Save large models (like Gemini Pro) for hard reasoning."),
+    ("Grounding (RAG) First", "Use prompt grounding (RAG) when facts change often. Only fine-tune to teach specific formats or tones."),
+    ("Optimize for Speed", "Speed up replies using KV Caching and shrink memory usage with 8-bit weight quantization."),
+    ("Safety Boundaries", "Deploy API safety filters to detect prompt injections and filter harmful outputs before they reach the user.")
 ]
 add_bullets(slide12, Inches(0.8), Inches(1.8), Inches(6.8), Inches(3.2), bullets12)
 add_example_box(slide12, Inches(0.8), Inches(5.2), Inches(6.8), Inches(1.5), 
-    "On the exam, if a scenario asks to connect private enterprise PDF documents with LLM outputs without model retraining, the answer is always RAG with Vector Search.")
+    "On the exam, if a scenario asks to connect private documents with LLM answers without retraining, the answer is always RAG with Vector Search.")
 
-tf_card12 = add_card_box(slide12, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Exam Tip", border_color=COLOR_ACCENT_GREEN)
+tf_card12 = add_card_box(slide12, Inches(8.0), Inches(1.8), Inches(4.5), Inches(4.9), "Core Exam Tip", border_color=COLOR_ACCENT_GREEN)
 p_desc12 = tf_card12.add_paragraph()
-p_desc12.text = "If the exam asks to fit a large model on a cheap edge device without loss of vocabulary representation, choose **Weight Quantization (e.g. to INT8)** to shrink memory usage by 50%."
+p_desc12.text = "If the exam asks how to fit a large model on a cheap device with limited memory, choose **Weight Quantization (e.g. to INT8)** to cut memory usage in half."
 format_run(p_desc12.runs[0], font_name="Segoe UI", font_size=Pt(11.5), color=COLOR_TEXT_SECONDARY)
 
 

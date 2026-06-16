@@ -73,17 +73,53 @@
                         If you type: <code>"The sky is"</code>, the model computes the mathematical likelihood of next words and selects <code>"blue"</code>. It then takes <code>"The sky is blue"</code> as input to predict the next word.
                     </div>
                 </div>
-                <div class="glass-card">
-                    <div class="card-title">
-                        <i class="fa-solid fa-circle-nodes"></i>
-                        <span>Key Core Block</span>
-                    </div>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;">
-                        Modern LLMs use a "Decoder-Only" architecture. Instead of translating inputs to a hidden code first, they directly read your text, analyze word relationships in parallel, and output the probability of what word should follow.
-                    </p>
-                    <p style="color: var(--accent-green); font-size: 0.85rem; font-weight: 500;">
-                        Note: This structure is highly efficient for writing creative, flowing text and code.
-                    </p>
+                <div class="diagram-box">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Transformer Architecture Flow</span>
+                    <svg class="diagram-svg" viewBox="0 0 400 220">
+                        <!-- Connection Paths -->
+                        <path id="path-input-attn" class="flow-path active-pink" d="M 80,110 L 115,110" />
+                        <path id="path-attn-ffn" class="flow-path active-blue" d="M 190,110 L 225,110" />
+                        <path id="path-ffn-out" class="flow-path active-green" d="M 300,110 L 335,110" />
+                        
+                        <!-- Flow dots -->
+                        <circle r="4" fill="var(--accent-pink)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 80,110 L 115,110" begin="0s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-blue)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 190,110 L 225,110" begin="0.8s" />
+                        </circle>
+                        <circle r="4" fill="var(--accent-green)">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 300,110 L 335,110" begin="1.6s" />
+                        </circle>
+
+                        <!-- Node: Input Text -->
+                        <g transform="translate(10, 85)">
+                            <rect x="0" y="0" width="70" height="50" rx="8" class="node-circle" />
+                            <text x="35" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Input Text</text>
+                            <text x="35" y="34" fill="var(--text-muted)" font-size="7" text-anchor="middle">["The","sky","is"]</text>
+                        </g>
+                        
+                        <!-- Node: Self-Attention -->
+                        <g transform="translate(115, 85)">
+                            <rect x="0" y="0" width="75" height="50" rx="8" class="node-circle pulse" />
+                            <text x="37.5" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Self-Attention</text>
+                            <text x="37.5" y="34" fill="var(--accent-pink)" font-size="7" text-anchor="middle">(Word Weights)</text>
+                        </g>
+                        
+                        <!-- Node: Feed-Forward -->
+                        <g transform="translate(225, 85)">
+                            <rect x="0" y="0" width="75" height="50" rx="8" class="node-circle" />
+                            <text x="37.5" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Feed-Forward</text>
+                            <text x="37.5" y="34" fill="var(--accent-blue)" font-size="7" text-anchor="middle">(Dense Layer)</text>
+                        </g>
+
+                        <!-- Node: Next Token -->
+                        <g transform="translate(335, 85)">
+                            <rect x="0" y="0" width="55" height="50" rx="8" class="node-circle" />
+                            <text x="27.5" y="22" fill="var(--text-primary)" font-size="8" text-anchor="middle" font-weight="600">Next Word</text>
+                            <text x="27.5" y="34" fill="var(--accent-green)" font-size="7" text-anchor="middle">"blue"</text>
+                        </g>
+                    </svg>
                 </div>
             </div>
         </section>
@@ -446,30 +482,30 @@
             </div>
         </section>
 
-        <!-- SLIDE 12: ARCHITECT'S CHECKLIST -->
+        <!-- SLIDE 12: KEY TAKEAWAYS -->
         <section class="slide">
             <span class="slide-category">Takeaways</span>
-            <h2 class="slide-title">Architect's Summary Checklist</h2>
+            <h2 class="slide-title">Key Takeaways</h2>
             <div class="split-grid">
                 <div class="slide-body">
                     <ul>
-                        <li><strong>Model Selection:</strong> Choose small models (like Gemma 2B) for cheap edge devices, and large models (like Gemini Pro) for complex reasoning.</li>
-                        <li><strong>RAG vs. Tuning:</strong> Always use prompt grounding (RAG) for changing facts. Save fine-tuning for style, tone, or formatting rules.</li>
-                        <li><strong>Latency Budget:</strong> Speed up your chat apps using KV Caching and weight quantization.</li>
-                        <li><strong>Security:</strong> Deploy moderation filters at the API level to block malicious injections.</li>
+                        <li><strong>Match Model to Task:</strong> Use small models (like Gemma 2B) for cheap, fast local tasks. Save large models (like Gemini Pro) for hard reasoning.</li>
+                        <li><strong>Grounding (RAG) First:</strong> Use prompt grounding (RAG) when facts change often. Only fine-tune to teach specific formats or tones.</li>
+                        <li><strong>Optimize for Speed:</strong> Speed up replies using KV Caching and shrink memory usage with 8-bit weight quantization.</li>
+                        <li><strong>Safety Boundaries:</strong> Deploy API safety filters to detect prompt injections and filter harmful outputs before they reach the user.</li>
                     </ul>
                     <div class="example-box">
-                        <strong>Architect's Advice</strong>
-                        On the exam, if a scenario asks to connect private enterprise PDF documents with LLM outputs without model retraining, the answer is always **RAG with Vector Search**.
+                        <strong>Key Lesson</strong>
+                        On the exam, if a scenario asks to connect private documents with LLM answers without retraining, the answer is always **RAG with Vector Search**.
                     </div>
                 </div>
                 <div class="glass-card" style="border-color: rgba(56, 239, 125, 0.3);">
                     <div class="card-title" style="color: var(--accent-green);">
                         <i class="fa-solid fa-circle-check"></i>
-                        <span>Exam Tip</span>
+                        <span>Core Exam Tip</span>
                     </div>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        If the exam asks to fit a large model on a cheap edge device without loss of vocabulary representation, choose **Weight Quantization (e.g. to INT8)** to shrink memory usage by 50%.
+                        If the exam asks how to fit a large model on a cheap device with limited memory, choose **Weight Quantization (e.g. to INT8)** to cut memory usage in half.
                     </p>
                 </div>
             </div>
